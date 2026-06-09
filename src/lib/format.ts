@@ -1,0 +1,63 @@
+import { format, formatDistanceToNow, isPast } from "date-fns";
+import type { ChecklistCategory, EventStatus, EventType } from "@/lib/types";
+
+export function formatEventType(type: EventType) {
+  return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+export function formatEventStatus(status: EventStatus) {
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+export function formatCategory(category: ChecklistCategory) {
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+export function formatEventDate(date: string | null) {
+  if (!date) return "Date TBD";
+  return format(new Date(`${date}T12:00:00`), "MMM d, yyyy");
+}
+
+export function getCountdownLabel(date: string | null) {
+  if (!date) return "No date set";
+  const eventDate = new Date(`${date}T12:00:00`);
+  if (isPast(eventDate)) return "Event date passed";
+  return formatDistanceToNow(eventDate, { addSuffix: true });
+}
+
+export function getProgressPercent(completed: number, total: number) {
+  if (total === 0) return 0;
+  return Math.round((completed / total) * 100);
+}
+
+export const CATEGORY_ORDER: ChecklistCategory[] = [
+  "venue",
+  "volunteers",
+  "speakers",
+  "sponsors",
+  "marketing",
+  "catering",
+  "logistics",
+  "other",
+];
+
+export const CATEGORY_HINTS: Record<ChecklistCategory, string> = {
+  venue: "Secure your space first — everything else depends on this",
+  volunteers: "Recruit and brief your team",
+  speakers: "Confirm lineup, bios, and sessions",
+  sponsors: "Outreach, tiers, and deliverables",
+  marketing: "Promotion and registration",
+  catering: "Food, drinks, and dietary needs",
+  logistics: "AV, WiFi, swag, and day-of ops",
+  other: "Everything else",
+};
+export const CATEGORY_ICONS: Record<ChecklistCategory, string> = {
+  venue: "🏛️",
+  volunteers: "🙋",
+  marketing: "📣",
+  sponsors: "🤝",
+  logistics: "📦",
+  speakers: "🎤",
+  catering: "🍽️",
+  other: "✅",
+};

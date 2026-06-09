@@ -1,65 +1,105 @@
-import Image from "next/image";
+import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
+import { ArrowRight, CheckSquare, MapPin, Sparkles } from "lucide-react";
+import { ChecklistPreview } from "@/components/marketing/checklist-preview";
+import { AppLogo } from "@/components/layout/app-logo";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
-export default function Home() {
+const benefits = [
+  "Describe your event in plain English",
+  "Get a venue-first checklist tailored to you",
+  "Check off steps as you go — budget & run sheet when you need them",
+];
+
+export default async function HomePage() {
+  const { userId } = await auth();
+  const ctaHref = userId ? "/events/new" : "/sign-up";
+  const ctaLabel = userId ? "Plan my first event" : "Plan my first event — free";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="flex-1">
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 sm:px-6">
+        <header className="flex h-16 items-center justify-between">
+          <AppLogo />
+          {userId ? (
+            <Button asChild variant="outline">
+              <Link href="/dashboard">My events</Link>
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button asChild variant="ghost">
+                <Link href="/sign-in">Sign in</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/sign-up">Get started</Link>
+              </Button>
+            </div>
+          )}
+        </header>
+
+        <section className="grid flex-1 items-center gap-12 py-12 lg:grid-cols-2 lg:py-20">
+          <div className="animate-fade-up max-w-xl">
+            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-sm font-medium text-violet-800 dark:border-violet-900 dark:bg-violet-950/60 dark:text-violet-200">
+              <Sparkles className="h-4 w-4" />
+              AI checklists for tech events
+            </p>
+            <h1 className="font-display text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.25rem]">
+              Describe your event.
+              <span className="block text-violet-700 dark:text-violet-300">Get a checklist that starts with venue.</span>
+            </h1>
+            <p className="mt-5 text-lg leading-relaxed text-stone-600 dark:text-stone-400">
+              Meetups, hackathons, workshops — tell us what you&apos;re planning and we&apos;ll
+              build a step-by-step plan you can edit and work through.
+            </p>
+
+            <ul className="mt-8 space-y-3">
+              {benefits.map((item, i) => (
+                <li
+                  key={item}
+                  className={cn(
+                    "animate-fade-up flex items-start gap-3 text-sm text-stone-700 dark:text-stone-300",
+                    i === 1 && "animate-fade-up-delay-1",
+                    i === 2 && "animate-fade-up-delay-2",
+                  )}
+                >
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300">
+                    <CheckSquare className="h-3 w-3" />
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Button asChild size="lg" className="shadow-lg shadow-violet-600/20">
+                <Link href={ctaHref}>
+                  {ctaLabel}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              {userId ? (
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/dashboard">View my events</Link>
+                </Button>
+              ) : (
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/templates">Browse templates</Link>
+                </Button>
+              )}
+            </div>
+
+            <p className="mt-6 flex items-center gap-2 text-xs text-stone-500">
+              <MapPin className="h-3.5 w-3.5" />
+              Built for community organizers — venue first, then volunteers, marketing, and more.
+            </p>
+          </div>
+
+          <div className="animate-fade-up animate-fade-up-delay-2 lg:justify-self-end">
+            <ChecklistPreview />
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }
