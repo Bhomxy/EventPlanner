@@ -12,6 +12,7 @@ import {
 } from "@/lib/events/queries";
 import { formatEventDate, formatEventType } from "@/lib/format";
 import { EventCardMenu } from "@/components/events/event-actions";
+import { ShareEventButton } from "@/components/events/share-event-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -45,7 +46,10 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
         </div>
         <div className="flex items-start justify-between gap-2">
           <h1 className="font-display text-2xl font-bold tracking-tight">{event.name}</h1>
-          <EventCardMenu eventId={eventId} />
+          <div className="flex shrink-0 items-center gap-1.5">
+            <ShareEventButton eventId={eventId} shareToken={event.share_token} />
+            <EventCardMenu eventId={eventId} />
+          </div>
         </div>
         {event.location ? (
           <p className="mt-1 text-sm text-zinc-500">{event.location}</p>

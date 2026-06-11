@@ -77,6 +77,7 @@ export type Event = {
   notes: string | null;
   budget_range: string | null;
   currency: string | null;
+  share_token: string | null;
   plan_summary: string | null;
   status: EventStatus;
   created_at: string;

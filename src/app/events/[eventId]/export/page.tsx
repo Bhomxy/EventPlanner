@@ -32,9 +32,16 @@ export default async function ExportPage({ params }: ExportPageProps) {
             Summary of completed work and expenses for {event.name}
           </p>
         </div>
-        <Button asChild variant="outline" size="sm">
-          <Link href={`/events/${eventId}`}>Back to checklists</Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm">
+            <a href={`/events/${eventId}/export/download`} download>
+              Download report (.md)
+            </a>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/events/${eventId}`}>Back to checklists</Link>
+          </Button>
+        </div>
       </div>
 
       <Card>

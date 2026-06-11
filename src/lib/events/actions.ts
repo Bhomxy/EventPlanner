@@ -204,6 +204,30 @@ export async function deleteEvent(eventId: string) {
   redirect("/dashboard");
 }
 
+export async function enableEventSharing(eventId: string) {
+  await ensureEditAccess(eventId);
+  const supabase = createAdminClient();
+  const token = crypto.randomUUID().replace(/-/g, "");
+  const { error } = await supabase
+    .from("events")
+    .update({ share_token: token, updated_at: new Date().toISOString() })
+    .eq("id", eventId);
+  if (error) throw error;
+  revalidateEvent(eventId);
+  return token;
+}
+
+export async function disableEventSharing(eventId: string) {
+  await ensureEditAccess(eventId);
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("events")
+    .update({ share_token: null, updated_at: new Date().toISOString() })
+    .eq("id", eventId);
+  if (error) throw error;
+  revalidateEvent(eventId);
+}
+
 export async function updateEventCurrency(eventId: string, currency: string) {
   await ensureEditAccess(eventId);
   const supabase = createAdminClient();

@@ -26,9 +26,10 @@ In the Supabase SQL editor, run migrations in order:
 supabase/migrations/001_initial_schema.sql
 supabase/migrations/002_prd_schema.sql
 supabase/migrations/003_event_currency.sql
+supabase/migrations/004_share_token.sql
 ```
 
-Migration 002 adds tasks, timeline, budget, team collaboration, activity logs, and templates. Migration 003 adds per-event budget currency.
+Migration 002 adds tasks, timeline, budget, team collaboration, activity logs, and templates. Migration 003 adds per-event budget currency. Migration 004 adds public share links.
 
 ### 4. Clerk webhook (optional)
 
