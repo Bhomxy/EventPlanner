@@ -59,6 +59,13 @@ export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
     });
   }
 
+  function updateCategory(id: string, category: BudgetCategory) {
+    startTransition(async () => {
+      await updateBudgetItem(id, { category });
+      router.refresh();
+    });
+  }
+
   function handleDelete(id: string) {
     startTransition(async () => {
       await deleteBudgetItem(id);
@@ -161,7 +168,23 @@ export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
                     onBlur={(e) => updateField(item.id, "label", e.target.value)}
                   />
                 </td>
-                <td className="px-4 py-3 capitalize text-zinc-500">{item.category}</td>
+                <td className="px-4 py-3">
+                  <Select
+                    value={item.category}
+                    onValueChange={(v) => updateCategory(item.id, v as BudgetCategory)}
+                  >
+                    <SelectTrigger className="h-8 w-32 capitalize">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BUDGET_CATEGORIES.map((c) => (
+                        <SelectItem key={c} value={c} className="capitalize">
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </td>
                 <td className="px-4 py-3 text-right">
                   <Input
                     type="number"

@@ -67,6 +67,8 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
   const [newCategory, setNewCategory] = useState<ChecklistCategory>("venue");
   const [subtaskParentId, setSubtaskParentId] = useState<string | null>(null);
   const [subtaskTitle, setSubtaskTitle] = useState("");
+  const [addingCategory, setAddingCategory] = useState<ChecklistCategory | null>(null);
+  const [categoryItemTitle, setCategoryItemTitle] = useState("");
 
   const rootTasks = useMemo(
     () => localTasks.filter((t) => !t.parent_id),
@@ -201,6 +203,16 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
     startTransition(async () => {
       await createTask(eventId, { title: newTitle, category: newCategory });
       setNewTitle("");
+      router.refresh();
+    });
+  }
+
+  function handleAddToCategory(category: ChecklistCategory) {
+    if (!categoryItemTitle.trim()) return;
+    startTransition(async () => {
+      await createTask(eventId, { title: categoryItemTitle.trim(), category });
+      setCategoryItemTitle("");
+      setAddingCategory(null);
       router.refresh();
     });
   }
@@ -486,6 +498,59 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
             <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
               {groupTasks.map((task) => renderTaskRow(task))}
             </ul>
+            <div className="border-t border-zinc-100 px-5 py-2.5 dark:border-zinc-800">
+              {addingCategory === category ? (
+                <div className="flex gap-2">
+                  <Input
+                    value={categoryItemTitle}
+                    onChange={(e) => setCategoryItemTitle(e.target.value)}
+                    placeholder={`New ${formatCategory(category).toLowerCase()} step…`}
+                    autoFocus
+                    className="h-9"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAddToCategory(category);
+                      if (e.key === "Escape") {
+                        setAddingCategory(null);
+                        setCategoryItemTitle("");
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="h-9 shrink-0"
+                    disabled={!categoryItemTitle.trim()}
+                    onClick={() => handleAddToCategory(category)}
+                  >
+                    Add
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    className="h-9 shrink-0"
+                    onClick={() => {
+                      setAddingCategory(null);
+                      setCategoryItemTitle("");
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAddingCategory(category);
+                    setCategoryItemTitle("");
+                  }}
+                  className="flex items-center gap-1.5 text-sm font-medium text-zinc-400 transition-colors hover:text-violet-700 dark:hover:text-violet-300"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add item
+                </button>
+              )}
+            </div>
           </section>
         );
       })}

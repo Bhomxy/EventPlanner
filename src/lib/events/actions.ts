@@ -490,7 +490,13 @@ export async function deleteTask(taskId: string) {
 
 export async function updateBudgetItem(
   itemId: string,
-  data: { estimated?: number; actual?: number; label?: string; notes?: string },
+  data: {
+    estimated?: number;
+    actual?: number;
+    label?: string;
+    notes?: string;
+    category?: BudgetCategory;
+  },
 ) {
   const userId = await requireUserId();
   const supabase = createAdminClient();
