@@ -6,7 +6,8 @@ import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   closestCorners,
   useDraggable,
   useDroppable,
@@ -114,12 +115,12 @@ function KanbanCard({ task, onOpen }: { task: Task; onOpen: (task: Task) => void
     >
       <button
         type="button"
-        className="shrink-0 cursor-grab touch-none text-stone-300 hover:text-stone-500 active:cursor-grabbing"
+        className="shrink-0 cursor-grab touch-none p-1.5 text-stone-300 hover:text-stone-500 active:cursor-grabbing sm:p-0.5"
         aria-label={`Drag ${task.title}`}
         {...listeners}
         {...attributes}
       >
-        <GripVertical className="h-3 w-3" />
+        <GripVertical className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
       </button>
       <button type="button" className="min-w-0 flex-1" onClick={() => onOpen(task)}>
         <TaskRow task={task} />
@@ -251,7 +252,7 @@ function KanbanColumn({
   return (
     <div
       className={cn(
-        "flex min-w-[220px] flex-1 flex-col rounded-xl sm:min-w-0",
+        "flex w-[78vw] max-w-[300px] shrink-0 snap-start flex-col rounded-xl sm:w-auto sm:max-w-none sm:shrink",
         styles.column,
         isActiveDrop && "ring-2 ring-violet-400/50",
       )}
@@ -301,7 +302,8 @@ export function TaskBoard({ eventId, tasks, members = [] }: TaskBoardProps) {
   const [, startTransition] = useTransition();
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
     useSensor(KeyboardSensor),
   );
 
@@ -376,7 +378,7 @@ export function TaskBoard({ eventId, tasks, members = [] }: TaskBoardProps) {
           setLocalTasks(tasks);
         }}
       >
-        <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+        <div className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:snap-none sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
           {TASK_STATUSES.map((status) => (
             <KanbanColumn
               key={status}
