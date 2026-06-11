@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 const STEPS = [
   {
     title: "Create your event",
-    body: "Describe your meetup, hackathon, or workshop — you'll get a venue-first checklist, schedule, and budget.",
+    body: "Describe any event — wedding, party, conference, fundraiser — and get a venue-first checklist, schedule, and budget.",
   },
   {
     title: "Work the checklist",

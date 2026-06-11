@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const benefits = [
-  "Describe your event in plain English",
+  "Describe your event in your own words",
   "Get a venue-first checklist tailored to you",
   "Track budget, schedule, and team as you go",
 ];
@@ -41,7 +41,7 @@ export default async function HomePage() {
         <section className="grid flex-1 items-center gap-10 py-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:py-24">
           <div className="animate-fade-up max-w-[34rem]">
             <p className="mb-5 text-sm font-medium text-[var(--brand-foreground)] dark:text-[var(--brand)]">
-              For meetups, hackathons, and workshops
+              Weddings, parties, conferences, fundraisers — any event
             </p>
             <h1 className="font-display text-balance text-[2.5rem] font-semibold leading-[1.06] sm:text-5xl lg:text-[3.35rem]">
               Describe your event.
@@ -92,7 +92,7 @@ export default async function HomePage() {
 
             <p className="mt-7 flex items-center gap-2 text-xs text-stone-500">
               <MapPin className="h-3.5 w-3.5 shrink-0" />
-              Venue first — then volunteers, marketing, and launch day.
+              Venue first — then catering, guests, marketing, and event day.
             </p>
           </div>
 

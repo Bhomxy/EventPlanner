@@ -21,7 +21,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
       <div>
         <h1 className="text-2xl font-bold">Team</h1>
         <p className="text-sm text-zinc-500">
-          Invite volunteers and assign roles for collaboration
+          Invite your team and assign roles for collaboration
         </p>
       </div>
       <TeamPanel eventId={eventId} members={members} />

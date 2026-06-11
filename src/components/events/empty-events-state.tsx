@@ -10,8 +10,7 @@ export function EmptyEventsState() {
       </div>
       <h3 className="font-display text-balance text-xl font-semibold">No events yet</h3>
       <p className="mt-3 max-w-sm text-sm leading-relaxed text-stone-500 dark:text-stone-400">
-        Describe an event and get your checklist — venue first, then volunteers, marketing, and
-        everything else.
+        Describe an event and get your checklist — venue first, then catering, guests, and everything else.
       </p>
       <Button asChild className="mt-9">
         <Link href="/events/new">

@@ -22,24 +22,24 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://eventplanner-black.vercel.app"),
   title: {
-    default: "EventPlanner — AI event planning for tech communities",
+    default: "EventPlanner — AI checklists for any event",
     template: "%s · EventPlanner",
   },
   description:
-    "Describe your event, get a tailored checklist, and work top-down from venue to launch day.",
+    "Describe your event, get a tailored checklist, and work from venue to launch day — weddings, parties, conferences, and more.",
   openGraph: {
-    title: "EventPlanner — AI event planning for tech communities",
+    title: "EventPlanner — AI checklists for any event",
     description:
-      "Describe your event, get a tailored checklist, and work top-down from venue to launch day.",
+      "Describe your event, get a tailored checklist, and work from venue to launch day — weddings, parties, conferences, and more.",
     url: "/",
     siteName: "EventPlanner",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "EventPlanner — AI event planning for tech communities",
+    title: "EventPlanner — AI checklists for any event",
     description:
-      "Describe your event, get a tailored checklist, and work top-down from venue to launch day.",
+      "Describe your event, get a tailored checklist, and work from venue to launch day — weddings, parties, conferences, and more.",
   },
 };
 

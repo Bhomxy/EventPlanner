@@ -31,7 +31,7 @@ function group(
 export function generateFallbackPlan(input: FallbackPlanInput): EventPlan {
   const size = input.audienceSize ?? 100;
   const location = input.location ?? "your city";
-  const goal = input.goal ?? "bring the tech community together";
+  const goal = input.goal ?? "bring people together for a memorable experience";
   const typeLabel = input.type === "other" ? "event" : input.type;
   const budget = input.budgetRange ?? `$${Math.max(500, size * 5)}`;
 
@@ -48,7 +48,7 @@ export function generateFallbackPlan(input: FallbackPlanInput): EventPlan {
   const checklistGroups = [
     group("venue", [
       item(`Confirm venue in ${location} for ${size}+ people`, null, "high", 30),
-      item("Verify AV, WiFi, and emergency exits", null, "high", 21),
+      item("Verify sound, lighting, capacity, and emergency exits", null, "high", 21),
       item("Sign venue contract and pay deposit", null, "medium", 28),
     ]),
     group("volunteers", [
@@ -58,7 +58,7 @@ export function generateFallbackPlan(input: FallbackPlanInput): EventPlan {
     ]),
     group("marketing", [
       item("Publish event page with agenda and registration link", null, "high", 21),
-      item("Announce on social channels and community groups", null, "medium", 14),
+      item("Announce on social channels and email your guest list", null, "medium", 14),
       item("Send reminder emails 7 days and 1 day before", null, "medium", 7),
     ]),
     group("sponsors", [
@@ -68,12 +68,12 @@ export function generateFallbackPlan(input: FallbackPlanInput): EventPlan {
     ]),
     group("logistics", [
       item("Test registration and check-in flow", null, "medium", 5),
-      item("Order swag and print signage", null, "medium", 10),
+      item("Order programs, signage, or guest favors", null, "medium", 10),
       item("Prepare day-of run sheet and backup plans", null, "high", 2),
     ]),
     group("speakers", [
-      item("Confirm speaker lineup and session titles", null, "high", 21),
-      item("Collect bios and slide templates", null, "medium", 10),
+      item("Confirm program lineup and roles", null, "high", 21),
+      item("Collect bios, materials, or run-of-show notes", null, "medium", 10),
     ]),
   ];
 
@@ -119,8 +119,8 @@ export function generateFallbackPlan(input: FallbackPlanInput): EventPlan {
     { category: "venue" as const, label: "Venue rental", estimated: size * 3, itemType: "expense" as const, notes: null },
     { category: "catering" as const, label: "Food & beverages", estimated: size * 8, itemType: "expense" as const, notes: null },
     { category: "marketing" as const, label: "Promotional materials", estimated: 500, itemType: "expense" as const, notes: null },
-    { category: "swag" as const, label: "Attendee swag", estimated: size * 4, itemType: "expense" as const, notes: null },
-    { category: "equipment" as const, label: "AV and equipment", estimated: 800, itemType: "expense" as const, notes: null },
+    { category: "swag" as const, label: "Programs, favors, or gifts", estimated: size * 4, itemType: "expense" as const, notes: null },
+    { category: "equipment" as const, label: "Sound and equipment rental", estimated: 800, itemType: "expense" as const, notes: null },
     { category: "other" as const, label: "Sponsorship income", estimated: size * 10, itemType: "income" as const, notes: null },
   ];
 
@@ -130,18 +130,18 @@ export function generateFallbackPlan(input: FallbackPlanInput): EventPlan {
     timeline,
     budget: budgetItems,
     teamStructure: [
-      { role: "Operations Lead", count: 1, responsibilities: "Owns run sheet and vendor coordination" },
-      { role: "Registration Volunteers", count: Math.max(2, Math.floor(size / 100)), responsibilities: "Check-in and attendee support" },
-      { role: "Stage / AV Support", count: 2, responsibilities: "Sessions, mics, and speaker transitions" },
+      { role: "Operations lead", count: 1, responsibilities: "Owns schedule and vendor coordination" },
+      { role: "Registration or guest desk", count: Math.max(2, Math.floor(size / 100)), responsibilities: "Check-in and guest support" },
+      { role: "Program support", count: 2, responsibilities: "Run-of-show, cues, and transitions" },
     ],
     marketingChecklist: [
-      "Create shareable event hashtag",
-      "Post speaker spotlight threads",
-      "Share photos and recap within 48 hours after event",
+      "Send save-the-date or announcement",
+      "Share reminders one week and one day before",
+      "Post photos and thank-you message within 48 hours after",
     ],
     sponsorshipChecklist: [
-      "Send thank-you notes to confirmed sponsors",
-      "Deliver promised logo placements on slides and banners",
+      "Send thank-you notes to partners or donors",
+      "Deliver promised recognition on programs or signage",
     ],
     risks: [
       {
@@ -150,8 +150,8 @@ export function generateFallbackPlan(input: FallbackPlanInput): EventPlan {
         severity: "high",
       },
       {
-        title: "Volunteer coverage",
-        message: `Target at least ${Math.max(4, Math.floor(size / 50))} volunteers for smooth operations.`,
+        title: "Team coverage",
+        message: `Target at least ${Math.max(4, Math.floor(size / 50))} helpers for smooth operations.`,
         severity: "medium",
       },
     ],

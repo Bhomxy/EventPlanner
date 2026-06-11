@@ -3,12 +3,13 @@ import { generateFallbackPlan } from "@/lib/ai/fallback-plan";
 import type { EventType } from "@/lib/types";
 
 const TEMPLATE_DEFS: { name: string; type: EventType; description: string }[] = [
-  { name: "Community Meetup", type: "meetup", description: "Monthly developer meetup blueprint" },
-  { name: "Hackathon", type: "hackathon", description: "48-hour hackathon operations plan" },
-  { name: "Workshop", type: "workshop", description: "Hands-on technical workshop" },
-  { name: "Conference", type: "conference", description: "Multi-track community conference" },
-  { name: "Bootcamp", type: "bootcamp", description: "Multi-day intensive bootcamp" },
-  { name: "Demo Day", type: "other", description: "Startup demo day with pitches and judges" },
+  { name: "Networking evening", type: "meetup", description: "Social or professional gathering with talks and mingling" },
+  { name: "Multi-day competition", type: "hackathon", description: "Team-based event with build time and presentations" },
+  { name: "Workshop or class", type: "workshop", description: "Hands-on session with materials and facilitators" },
+  { name: "Conference", type: "conference", description: "Multi-session event with speakers and registration" },
+  { name: "Retreat or bootcamp", type: "bootcamp", description: "Multi-day program with lodging and meals" },
+  { name: "Wedding reception", type: "other", description: "Ceremony and reception with catering and vendors" },
+  { name: "Fundraiser gala", type: "other", description: "Ticketed charity or cause event with program and donors" },
 ];
 
 export async function seedTemplatesIfEmpty(supabase: SupabaseClient) {

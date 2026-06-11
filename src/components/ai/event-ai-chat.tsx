@@ -14,7 +14,7 @@ type EventAiChatProps = {
 
 const STARTERS = [
   "What should I prioritize this week?",
-  "Suggest marketing tasks for my audience size",
+  "What am I forgetting before event day?",
   "What risks should I watch before event day?",
 ];
 

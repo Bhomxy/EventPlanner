@@ -56,7 +56,7 @@ export default async function TemplatesPage() {
         <div className="mb-8">
           <h1 className="font-display text-2xl font-semibold tracking-tight">Event templates</h1>
           <p className="mt-1 text-sm text-stone-500">
-            Start from a built-in playbook or one you saved from a past event
+            Start from a built-in playbook or one you saved from a past event — weddings, parties, conferences, and more.
           </p>
         </div>
 

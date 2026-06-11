@@ -1,6 +1,6 @@
 # EventPlanner
 
-AI-powered event planning for tech communities. List your events, generate operational plans, and work through practical checklists.
+AI-powered event planning for anyone organizing an event. Generate checklists, schedules, and budgets — then work through them step by step.
 
 ## Setup
 

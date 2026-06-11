@@ -2,7 +2,15 @@ import { format, formatDistanceToNow, isPast } from "date-fns";
 import type { ChecklistCategory, EventStatus, EventType } from "@/lib/types";
 
 export function formatEventType(type: EventType) {
-  return type.charAt(0).toUpperCase() + type.slice(1);
+  const labels: Record<EventType, string> = {
+    meetup: "Meetup",
+    hackathon: "Hackathon",
+    workshop: "Workshop",
+    conference: "Conference",
+    bootcamp: "Bootcamp",
+    other: "General event",
+  };
+  return labels[type] ?? type.charAt(0).toUpperCase() + type.slice(1);
 }
 
 export function formatEventStatus(status: EventStatus) {
@@ -70,12 +78,12 @@ export const CATEGORY_ORDER: ChecklistCategory[] = [
 
 export const CATEGORY_HINTS: Record<ChecklistCategory, string> = {
   venue: "Secure your space first — everything else depends on this",
-  volunteers: "Recruit and brief your team",
-  speakers: "Confirm lineup, bios, and sessions",
-  sponsors: "Outreach, tiers, and deliverables",
+  volunteers: "Recruit and brief your team or day-of helpers",
+  speakers: "Hosts, performers, or program lineup",
+  sponsors: "Partners, donors, or sponsors",
   marketing: "Promotion and registration",
   catering: "Food, drinks, and dietary needs",
-  logistics: "AV, WiFi, swag, and day-of ops",
+  logistics: "Equipment, signage, transport, and day-of ops",
   other: "Everything else",
 };
 export const CATEGORY_ICONS: Record<ChecklistCategory, string> = {

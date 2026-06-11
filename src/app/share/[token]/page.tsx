@@ -242,7 +242,7 @@ export default async function SharedEventPage({ params }: SharePageProps) {
           <Link href="/" className="font-medium text-violet-700 hover:underline dark:text-violet-300">
             EventPlanner
           </Link>{" "}
-          — AI checklists for tech events
+          — AI checklists for any event
         </footer>
       </div>
     </main>

@@ -21,7 +21,7 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
       <div>
         <h1 className="text-2xl font-bold">Budget</h1>
         <p className="text-sm text-zinc-500">
-          Track estimated vs actual spending and sponsorship income
+          Track estimated vs actual spending and any income or donations
         </p>
         {event.budget_range ? (
           <p className="mt-1 text-sm">Target range: {event.budget_range}</p>

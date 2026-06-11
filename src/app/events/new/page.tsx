@@ -27,8 +27,8 @@ export default async function NewEventPage({ searchParams }: NewEventPageProps) 
           <p className="text-sm font-medium text-violet-700 dark:text-violet-300">New event</p>
           <h1 className="font-display mt-1 text-3xl font-bold tracking-tight">What are you planning?</h1>
           <p className="mt-2 text-sm leading-relaxed text-stone-500 dark:text-stone-400">
-            Describe it in your own words. We&apos;ll generate a checklist that starts with venue —
-            then volunteers, speakers, marketing, and the rest.
+            Describe it in your own words — wedding, party, conference, fundraiser, or anything else.
+            We&apos;ll generate a checklist that starts with venue, then catering, guests, and the rest.
           </p>
         </div>
 

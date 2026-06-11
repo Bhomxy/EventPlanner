@@ -465,7 +465,7 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
               {progress === 100 ? "You're ready" : "Start here"}
             </p>
             <p className="mt-1 text-xs text-stone-600 dark:text-stone-400">
-              {completed} of {rootTasks.length} steps done · venue first, then work down
+              {completed} of {rootTasks.length} steps done · venue first, then the rest
             </p>
           </div>
           <span className="tabular-nums text-2xl font-semibold text-[var(--brand)]">{progress}%</span>

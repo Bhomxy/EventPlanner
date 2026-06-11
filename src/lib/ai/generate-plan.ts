@@ -47,7 +47,9 @@ export async function generateEventPlan(
     const { object } = await generateObject({
       model: openai("gpt-4o-mini"),
       schema: eventPlanSchema,
-      system: `You are an expert tech event operations planner. Generate checklists tailored to the specific event described.
+      system: `You are an expert event operations planner. Generate checklists tailored to the specific event described — weddings, corporate events, parties, fundraisers, conferences, and community gatherings all count.
+
+Adapt language and tasks to the event type (e.g. "guest list" for a wedding, "registration" for a conference). Do not assume a tech or developer audience unless the user says so.
 
 CRITICAL: Order checklist groups with VENUE first, then volunteers, speakers, sponsors, marketing, catering, logistics.
 

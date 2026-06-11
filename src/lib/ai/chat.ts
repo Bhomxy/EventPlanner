@@ -26,7 +26,7 @@ export async function askEventAssistant(
   try {
     const { text } = await generateText({
       model: openai("gpt-4o-mini"),
-      system: `You are an expert tech event operations assistant embedded in EventPlanner. Answer concisely and actionably. Reference specific tasks and deadlines from the event context when relevant. Prefer numbered lists for action items. Do not invent tasks that aren't implied by the context.`,
+      system: `You are an expert event planning assistant embedded in EventPlanner. You help with weddings, parties, conferences, fundraisers, and any other event type. Answer concisely and actionably. Reference specific tasks and deadlines from the event context when relevant. Prefer numbered lists for action items. Do not invent tasks that aren't implied by the context. Do not assume a tech audience unless the event context says so.`,
       prompt: `Event context:\n${context}\n\n${historyBlock ? `Recent conversation:\n${historyBlock}\n\n` : ""}User question: ${message}`,
     });
     return { reply: text.trim(), source: "ai" };

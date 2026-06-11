@@ -5,15 +5,15 @@ const MOCK_GROUPS = [
   {
     category: "venue" as const,
     highlight: true,
-    items: ["Confirm venue holds 280 seated", "Sign contract & pay deposit", "Check AV and Wi‑Fi"],
+    items: ["Confirm venue holds 280 seated", "Sign contract & pay deposit", "Walk through layout and access"],
   },
   {
     category: "volunteers" as const,
-    items: ["Recruit registration desk team", "Brief volunteers on schedule"],
+    items: ["Recruit registration desk team", "Brief team on run-of-show"],
   },
   {
     category: "marketing" as const,
-    items: ["Open registration page", "Announce on community channels"],
+    items: ["Open registration or RSVP page", "Send save-the-date to guest list"],
   },
 ];
 
@@ -31,7 +31,7 @@ export function ChecklistPreview() {
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-medium text-stone-500">Sample checklist</p>
-            <p className="font-display mt-0.5 text-lg font-semibold">Berlin Dev Night</p>
+            <p className="font-display mt-0.5 text-lg font-semibold">Harper &amp; Jordan&apos;s Wedding</p>
           </div>
           <span className="tabular-nums rounded-[var(--radius-sm)] bg-[var(--brand-muted)] px-2 py-1 text-xs font-semibold text-[var(--brand-foreground)]">
             18% done

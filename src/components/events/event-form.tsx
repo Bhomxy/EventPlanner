@@ -29,7 +29,7 @@ const LOADING_CATEGORIES = CATEGORY_ORDER.slice(0, 6);
 export function EventForm({ event, mode = "create", templateId }: EventFormProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [type, setType] = useState(event?.type ?? "meetup");
+  const [type, setType] = useState(event?.type ?? "other");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -77,10 +77,10 @@ export function EventForm({ event, mode = "create", templateId }: EventFormProps
           rows={5}
           disabled={isPending}
           className="resize-none border-stone-200 bg-stone-50/50 text-base leading-relaxed focus:bg-white dark:border-stone-800 dark:bg-stone-900/50 dark:focus:bg-stone-950"
-          placeholder="I'm planning a 300-person AI meetup in Lagos for developers. Goal is to connect the local AI community. Budget around $5k. Date in March..."
+          placeholder="A 150-guest wedding in Austin this June. Outdoor ceremony, indoor reception. Budget around $18k. Need catering, photographer, and day-of coordinator..."
         />
         <p className="text-xs text-stone-500">
-          Write freely — we&apos;ll build checklists for venue, volunteers, marketing, and more.
+          Write freely — we&apos;ll build checklists for venue, catering, guests, marketing, and more.
         </p>
       </div>
 
@@ -120,7 +120,7 @@ export function EventForm({ event, mode = "create", templateId }: EventFormProps
         </div>
         <div className="space-y-2">
           <Label htmlFor="location">Location</Label>
-          <Input id="location" name="location" placeholder="Lagos, Nigeria" />
+          <Input id="location" name="location" placeholder="City or venue name" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="audience_size">Expected audience</Label>
