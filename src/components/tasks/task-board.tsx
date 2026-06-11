@@ -30,6 +30,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 
 const STATUS_LABELS: Record<TaskStatus, string> = {
   todo: "To do",
@@ -299,6 +300,7 @@ export function TaskBoard({ eventId, tasks, members = [] }: TaskBoardProps) {
   const [localTasks, setLocalTasks] = useState(tasks);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const { toast } = useToast();
   const [, startTransition] = useTransition();
 
   const sensors = useSensors(
@@ -334,6 +336,7 @@ export function TaskBoard({ eventId, tasks, members = [] }: TaskBoardProps) {
         router.refresh();
       } catch {
         setLocalTasks(tasks);
+        toast("Couldn't move task — check your connection", { variant: "error" });
       }
     });
   }

@@ -14,6 +14,8 @@ import {
 import { TaskComments } from "@/components/tasks/task-comments";
 import { formatCategory } from "@/lib/format";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,7 +52,9 @@ export function TaskDetailPanel({
   onDelete,
 }: TaskDetailPanelProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [, startTransition] = useTransition();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description ?? "");
   const [dueDate, setDueDate] = useState(task.due_date ?? "");
@@ -68,6 +72,7 @@ export function TaskDetailPanel({
     onUpdate({ ...task, ...data });
     startTransition(async () => {
       await updateTaskDetails(task.id, data);
+      toast("Saved");
       router.refresh();
     });
   }
@@ -81,11 +86,11 @@ export function TaskDetailPanel({
     });
   }
 
-  function handleDelete() {
-    if (!window.confirm("Delete this task?")) return;
+  function handleDeleteConfirmed() {
     onDelete(task.id);
     startTransition(async () => {
       await deleteTask(task.id);
+      toast("Task deleted");
       onClose();
       router.refresh();
     });
@@ -102,7 +107,7 @@ export function TaskDetailPanel({
       <aside className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-stone-200 bg-white shadow-2xl dark:border-stone-800 dark:bg-stone-950">
         <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3 dark:border-stone-800">
           <p className="text-xs font-medium uppercase tracking-wide text-stone-400">Task details</p>
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
+          <Button type="button" variant="ghost" size="icon" title="Close" className="h-8 w-8" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -226,13 +231,23 @@ export function TaskDetailPanel({
             variant="ghost"
             size="sm"
             className="ml-auto text-red-600 hover:text-red-700"
-            onClick={handleDelete}
+            onClick={() => setConfirmingDelete(true)}
           >
             <Trash2 className="h-4 w-4" />
             Delete
           </Button>
         </div>
       </aside>
+
+      <ConfirmDialog
+        open={confirmingDelete}
+        onOpenChange={setConfirmingDelete}
+        title="Delete this task?"
+        description="The task and any subtasks or comments on it will be removed."
+        confirmLabel="Delete task"
+        destructive
+        onConfirm={handleDeleteConfirmed}
+      />
     </>
   );
 }

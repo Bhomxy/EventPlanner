@@ -215,7 +215,7 @@ export default async function SharedEventPage({ params }: SharePageProps) {
 
         {timeline.length ? (
           <div className="space-y-4">
-            <h2 className="font-display text-lg font-semibold">Run sheet</h2>
+            <h2 className="font-display text-lg font-semibold">Schedule</h2>
             <div className="surface-card divide-y divide-stone-100 rounded-2xl dark:divide-stone-800">
               {timeline.map((item) => (
                 <div key={item.id} className="flex items-start gap-4 px-5 py-3.5">

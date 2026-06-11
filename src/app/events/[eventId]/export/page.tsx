@@ -39,7 +39,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
             </a>
           </Button>
           <Button asChild variant="outline" size="sm">
-            <Link href={`/events/${eventId}`}>Back to checklists</Link>
+            <Link href={`/events/${eventId}`}>Back to task list</Link>
           </Button>
         </div>
       </div>

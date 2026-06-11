@@ -4,34 +4,93 @@ import { useState, useTransition } from "react";
 import { Archive, Copy, Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 import { archiveEvent, deleteEvent, duplicateEvent } from "@/lib/events/actions";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 type EventActionsProps = {
   eventId: string;
 };
 
-export function EventActions({ eventId }: EventActionsProps) {
-  const [isPending, startTransition] = useTransition();
+type PendingConfirm = "archive" | "delete" | null;
 
-  function handleArchive() {
-    if (!window.confirm("Archive this event?")) return;
+function useEventActionHandlers(eventId: string) {
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+  const [confirming, setConfirming] = useState<PendingConfirm>(null);
+
+  function handleDuplicate() {
+    toast("Duplicating event…", { variant: "info" });
+    startTransition(async () => {
+      await duplicateEvent(eventId);
+    });
+  }
+
+  function handleArchiveConfirmed() {
     startTransition(async () => {
       await archiveEvent(eventId);
     });
   }
 
-  function handleDelete() {
-    if (!window.confirm("Delete this event permanently?")) return;
+  function handleDeleteConfirmed() {
     startTransition(async () => {
       await deleteEvent(eventId);
     });
   }
 
-  function handleDuplicate() {
-    startTransition(async () => {
-      await duplicateEvent(eventId);
-    });
-  }
+  return {
+    isPending,
+    confirming,
+    setConfirming,
+    handleDuplicate,
+    handleArchiveConfirmed,
+    handleDeleteConfirmed,
+  };
+}
+
+function EventConfirmDialogs({
+  confirming,
+  setConfirming,
+  onArchive,
+  onDelete,
+}: {
+  confirming: PendingConfirm;
+  setConfirming: (c: PendingConfirm) => void;
+  onArchive: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <>
+      <ConfirmDialog
+        open={confirming === "archive"}
+        onOpenChange={(open) => !open && setConfirming(null)}
+        title="Archive this event?"
+        description="The event will be hidden from your dashboard. Its data is kept and it can be restored from the database."
+        confirmLabel="Archive event"
+        onConfirm={onArchive}
+      />
+      <ConfirmDialog
+        open={confirming === "delete"}
+        onOpenChange={(open) => !open && setConfirming(null)}
+        title="Delete this event permanently?"
+        description="All checklists, tasks, timeline items, and budget data for this event will be deleted. This cannot be undone."
+        confirmLabel="Delete event"
+        destructive
+        onConfirm={onDelete}
+      />
+    </>
+  );
+}
+
+export function EventActions({ eventId }: EventActionsProps) {
+  const {
+    isPending,
+    confirming,
+    setConfirming,
+    handleDuplicate,
+    handleArchiveConfirmed,
+    handleDeleteConfirmed,
+  } = useEventActionHandlers(eventId);
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -49,7 +108,7 @@ export function EventActions({ eventId }: EventActionsProps) {
         type="button"
         variant="outline"
         size="sm"
-        onClick={handleArchive}
+        onClick={() => setConfirming("archive")}
         disabled={isPending}
       >
         <Archive className="h-4 w-4" />
@@ -59,30 +118,32 @@ export function EventActions({ eventId }: EventActionsProps) {
         type="button"
         variant="destructive"
         size="sm"
-        onClick={handleDelete}
+        onClick={() => setConfirming("delete")}
         disabled={isPending}
       >
         <Trash2 className="h-4 w-4" />
         Delete
       </Button>
+      <EventConfirmDialogs
+        confirming={confirming}
+        setConfirming={setConfirming}
+        onArchive={handleArchiveConfirmed}
+        onDelete={handleDeleteConfirmed}
+      />
     </div>
   );
 }
 
 export function EventCardMenu({ eventId }: EventActionsProps) {
   const [open, setOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
-
-  function run(action: () => Promise<void>, confirmMessage?: string) {
-    if (confirmMessage && !window.confirm(confirmMessage)) {
-      setOpen(false);
-      return;
-    }
-    setOpen(false);
-    startTransition(async () => {
-      await action();
-    });
-  }
+  const {
+    isPending,
+    confirming,
+    setConfirming,
+    handleDuplicate,
+    handleArchiveConfirmed,
+    handleDeleteConfirmed,
+  } = useEventActionHandlers(eventId);
 
   return (
     <div
@@ -96,6 +157,7 @@ export function EventCardMenu({ eventId }: EventActionsProps) {
       <button
         type="button"
         aria-label="Event actions"
+        title="Event actions"
         aria-expanded={open}
         disabled={isPending}
         onClick={() => setOpen(!open)}
@@ -124,22 +186,38 @@ export function EventCardMenu({ eventId }: EventActionsProps) {
             <MenuItem
               icon={Copy}
               label="Duplicate"
-              onClick={() => run(() => duplicateEvent(eventId))}
+              onClick={() => {
+                setOpen(false);
+                handleDuplicate();
+              }}
             />
             <MenuItem
               icon={Archive}
               label="Archive"
-              onClick={() => run(() => archiveEvent(eventId), "Archive this event?")}
+              onClick={() => {
+                setOpen(false);
+                setConfirming("archive");
+              }}
             />
             <MenuItem
               icon={Trash2}
               label="Delete"
               destructive
-              onClick={() => run(() => deleteEvent(eventId), "Delete this event permanently?")}
+              onClick={() => {
+                setOpen(false);
+                setConfirming("delete");
+              }}
             />
           </div>
         </>
       ) : null}
+
+      <EventConfirmDialogs
+        confirming={confirming}
+        setConfirming={setConfirming}
+        onArchive={handleArchiveConfirmed}
+        onDelete={handleDeleteConfirmed}
+      />
     </div>
   );
 }

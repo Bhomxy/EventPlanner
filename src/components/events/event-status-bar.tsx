@@ -50,7 +50,7 @@ export function EventStatusBar({ event, stats, eventId }: EventStatusBarProps) {
           Budget
         </Link>
         <Link href={`/events/${eventId}/timeline`} className="font-medium text-violet-700 hover:underline dark:text-violet-300">
-          Run sheet
+          Schedule
         </Link>
         <Link href={`/events/${eventId}/team`} className="font-medium text-violet-700 hover:underline dark:text-violet-300">
           Team

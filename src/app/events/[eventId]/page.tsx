@@ -75,13 +75,13 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
           <Link href={`/events/${eventId}/budget`}>Budget</Link>
         </Button>
         <Button asChild variant="outline" size="sm">
-          <Link href={`/events/${eventId}/timeline`}>Run sheet</Link>
+          <Link href={`/events/${eventId}/timeline`}>Schedule</Link>
         </Button>
         <Button asChild variant="outline" size="sm">
           <Link href={`/events/${eventId}/team`}>Team</Link>
         </Button>
         <Button asChild variant="outline" size="sm">
-          <Link href={`/events/${eventId}/tasks`}>Board view</Link>
+          <Link href={`/events/${eventId}/tasks`}>Task board</Link>
         </Button>
         <Button asChild variant="outline" size="sm">
           <Link href={`/events/${eventId}/export`}>Post-event export</Link>

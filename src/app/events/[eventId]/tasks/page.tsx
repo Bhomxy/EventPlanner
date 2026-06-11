@@ -25,14 +25,16 @@ export default async function TasksPage({ params }: TasksPageProps) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-violet-700 dark:text-violet-300">Board view</p>
-          <h1 className="font-display mt-1 text-2xl font-bold tracking-tight">Kanban</h1>
+          <p className="text-sm font-medium text-violet-700 dark:text-violet-300">
+            Same tasks as your list — organized by status
+          </p>
+          <h1 className="font-display mt-1 text-2xl font-bold tracking-tight">Task board</h1>
           <p className="mt-1 text-sm text-stone-500">
             Grouped by category · drag between columns · click a task for details
           </p>
         </div>
         <Button asChild variant="outline" size="sm">
-          <Link href={`/events/${eventId}`}>← Back to checklists</Link>
+          <Link href={`/events/${eventId}`}>← Task list</Link>
         </Button>
       </div>
 

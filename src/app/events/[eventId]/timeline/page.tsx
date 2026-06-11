@@ -22,7 +22,7 @@ export default async function TimelinePage({ params }: TimelinePageProps) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Run sheet</h1>
+          <h1 className="text-2xl font-bold">Schedule</h1>
           <p className="text-sm text-zinc-500">Hour-by-hour event-day timeline — edit times and blocks</p>
         </div>
         <Button asChild variant="outline">

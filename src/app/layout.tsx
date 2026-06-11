@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist_Mono, Outfit, Sora } from "next/font/google";
+import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
 const bodyFont = Outfit({
@@ -58,7 +59,7 @@ export default function RootLayout({
           suppressHydrationWarning
           className="min-h-full flex flex-col text-stone-900 dark:text-stone-50"
         >
-          {children}
+          <ToastProvider>{children}</ToastProvider>
         </body>
       </html>
     </ClerkProvider>

@@ -30,8 +30,10 @@ import {
 } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/toast";
 import {
   Select,
   SelectContent,
@@ -57,7 +59,11 @@ const STATUS_LABELS: Record<TaskStatus, string> = {
 
 export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [localTasks, setLocalTasks] = useState(tasks);
+  const [hideCompleted, setHideCompleted] = useState(false);
+  const [collapsed, setCollapsed] = useState<Set<ChecklistCategory>>(new Set());
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -125,12 +131,18 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
 
   function handleToggle(task: Task, checked: boolean) {
     patchTask(task.id, { status: checked ? "completed" : "todo" });
+    if (checked) {
+      toast("Task completed", {
+        action: { label: "Undo", onClick: () => handleToggle(task, false) },
+      });
+    }
     startTransition(async () => {
       try {
         await toggleTaskComplete(task.id, checked);
         router.refresh();
       } catch {
         setLocalTasks(tasks);
+        toast("Couldn't save — check your connection", { variant: "error" });
       }
     });
   }
@@ -158,6 +170,7 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
     setEditingId(null);
     startTransition(async () => {
       await updateTaskDetails(taskId, { title: editTitle });
+      toast("Saved");
       router.refresh();
     });
   }
@@ -166,6 +179,7 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
     patchTask(taskId, { due_date: dueDate });
     startTransition(async () => {
       await updateTaskDetails(taskId, { due_date: dueDate });
+      toast("Due date saved");
       router.refresh();
     });
   }
@@ -176,6 +190,7 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
       await updateTaskDetails(taskId, {
         description: description.trim() || null,
       });
+      toast("Notes saved");
       router.refresh();
     });
   }
@@ -184,16 +199,18 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
     patchTask(taskId, { assignee_id: assigneeId });
     startTransition(async () => {
       await updateTaskDetails(taskId, { assignee_id: assigneeId });
+      toast("Assignee saved");
       router.refresh();
     });
   }
 
-  function handleDelete(taskId: string) {
+  function handleDeleteConfirmed(taskId: string) {
     setLocalTasks((current) =>
       current.filter((t) => t.id !== taskId && t.parent_id !== taskId),
     );
     startTransition(async () => {
       await deleteTask(taskId);
+      toast("Task deleted");
       router.refresh();
     });
   }
@@ -397,6 +414,7 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
                 type="button"
                 variant="ghost"
                 size="icon"
+                title={isExpanded ? "Hide details" : "Show details (due date, notes, assignee)"}
                 className="h-8 w-8 text-zinc-400"
                 onClick={() => setExpandedId(isExpanded ? null : task.id)}
               >
@@ -406,15 +424,16 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
                 type="button"
                 variant="ghost"
                 size="icon"
+                title="Comments"
                 className="h-8 w-8 text-zinc-400"
                 onClick={() => setCommentsId(commentsId === task.id ? null : task.id)}
               >
                 <MessageSquare className="h-3.5 w-3.5" />
               </Button>
-              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-zinc-400" onClick={() => startEdit(task)}>
+              <Button type="button" variant="ghost" size="icon" title="Edit title" className="h-8 w-8 text-zinc-400" onClick={() => startEdit(task)}>
                 <Pencil className="h-3.5 w-3.5" />
               </Button>
-              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-red-600" onClick={() => handleDelete(task.id)}>
+              <Button type="button" variant="ghost" size="icon" title="Delete task" className="h-8 w-8 text-zinc-400 hover:text-red-600" onClick={() => setDeletingId(task.id)}>
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
@@ -462,11 +481,26 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
             ))}
           </ul>
         ) : null}
+        {completed > 0 ? (
+          <button
+            type="button"
+            onClick={() => setHideCompleted(!hideCompleted)}
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-white px-3 py-1 text-xs font-medium text-violet-800 transition-colors hover:border-violet-300 dark:border-violet-800 dark:bg-violet-950/50 dark:text-violet-200"
+          >
+            {hideCompleted ? "Show" : "Hide"} {completed} completed
+          </button>
+        ) : null}
       </div>
 
       {grouped.map(([category, groupTasks]) => {
         const done = groupTasks.filter((t) => t.status === "completed").length;
         const isVenue = category === "venue";
+        const visibleTasks = hideCompleted
+          ? groupTasks.filter((t) => t.status !== "completed")
+          : groupTasks;
+        const isCollapsed = collapsed.has(category);
+
+        if (hideCompleted && !visibleTasks.length) return null;
 
         return (
           <section
@@ -478,7 +512,21 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
                 : "border-zinc-200 dark:border-zinc-800",
             )}
           >
-            <div className="border-b border-zinc-100 px-5 py-4 dark:border-zinc-800">
+            <button
+              type="button"
+              onClick={() =>
+                setCollapsed((current) => {
+                  const next = new Set(current);
+                  if (next.has(category)) next.delete(category);
+                  else next.add(category);
+                  return next;
+                })
+              }
+              className={cn(
+                "w-full px-5 py-4 text-left",
+                !isCollapsed && "border-b border-zinc-100 dark:border-zinc-800",
+              )}
+            >
               <div className="flex items-center gap-2">
                 <span className="text-xl">{CATEGORY_ICONS[category]}</span>
                 <div>
@@ -490,15 +538,28 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
                   </h3>
                   <p className="text-xs text-zinc-500">{CATEGORY_HINTS[category]}</p>
                 </div>
-                <span className="ml-auto text-xs text-zinc-500">
+                <span className="ml-auto text-xs tabular-nums text-zinc-500">
                   {done}/{groupTasks.length}
                 </span>
+                {isCollapsed ? (
+                  <ChevronRight className="h-4 w-4 text-zinc-400" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-zinc-400" />
+                )}
               </div>
-            </div>
-            <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
-              {groupTasks.map((task) => renderTaskRow(task))}
-            </ul>
-            <div className="border-t border-zinc-100 px-5 py-2.5 dark:border-zinc-800">
+            </button>
+            {isCollapsed ? null : (
+              <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                {visibleTasks.map((task) => renderTaskRow(task))}
+              </ul>
+            )}
+            <div
+              className={cn(
+                "px-5 py-2.5",
+                !isCollapsed && "border-t border-zinc-100 dark:border-zinc-800",
+                isCollapsed && "hidden",
+              )}
+            >
               {addingCategory === category ? (
                 <div className="flex gap-2">
                   <Input
@@ -584,6 +645,16 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
           </Button>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deletingId !== null}
+        onOpenChange={(open) => !open && setDeletingId(null)}
+        title="Delete this task?"
+        description="The task and any subtasks or comments on it will be removed."
+        confirmLabel="Delete task"
+        destructive
+        onConfirm={() => deletingId && handleDeleteConfirmed(deletingId)}
+      />
     </div>
   );
 }

@@ -11,6 +11,8 @@ import {
 } from "@/lib/events/actions";
 import { formatCategory } from "@/lib/format";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -33,27 +35,22 @@ export function PlanSummaryEditor({
   const [open, setOpen] = useState(false);
   const [summary, setSummary] = useState(initialSummary ?? "");
   const [category, setCategory] = useState<ChecklistCategory>("venue");
+  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [isRegenerating, startRegenerate] = useTransition();
   const [isPartial, startPartial] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState<"all" | "category" | null>(null);
 
   function handleSave() {
     startTransition(async () => {
       await updatePlanSummary(eventId, summary);
-      setMessage("Saved");
-      setTimeout(() => setMessage(null), 2000);
+      toast("Notes saved");
     });
   }
 
-  function handleRegenerate() {
-    if (
-      !window.confirm(
-        "This replaces your checklists, timeline, and budget with a fresh plan. Continue?",
-      )
-    ) {
-      return;
-    }
+  function handleRegenerateConfirmed() {
+    toast("Regenerating plan — this takes a few seconds…", { variant: "info" });
     startRegenerate(async () => {
       try {
         await regeneratePlan(eventId);
@@ -64,14 +61,8 @@ export function PlanSummaryEditor({
     });
   }
 
-  function handlePartialRegenerate() {
-    if (
-      !window.confirm(
-        `Replace only ${formatCategory(category)} checklist items? Other sections stay unchanged.`,
-      )
-    ) {
-      return;
-    }
+  function handlePartialRegenerateConfirmed() {
+    toast(`Refreshing ${formatCategory(category)} checklist…`, { variant: "info" });
     startPartial(async () => {
       try {
         await regenerateCategoryChecklists(eventId, category);
@@ -119,7 +110,7 @@ export function PlanSummaryEditor({
               type="button"
               size="sm"
               variant="outline"
-              onClick={handleRegenerate}
+              onClick={() => setConfirming("all")}
               disabled={isRegenerating}
             >
               {isRegenerating ? (
@@ -147,7 +138,7 @@ export function PlanSummaryEditor({
               type="button"
               size="sm"
               variant="secondary"
-              onClick={handlePartialRegenerate}
+              onClick={() => setConfirming("category")}
               disabled={isPartial}
             >
               {isPartial ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
@@ -157,6 +148,24 @@ export function PlanSummaryEditor({
           {message ? <p className="text-xs text-zinc-500">{message}</p> : null}
         </div>
       ) : null}
+
+      <ConfirmDialog
+        open={confirming === "all"}
+        onOpenChange={(o) => !o && setConfirming(null)}
+        title="Regenerate the whole plan?"
+        description="Your checklists, schedule, and budget will be replaced with a fresh AI plan. Completed tasks and edits will be lost."
+        confirmLabel="Regenerate everything"
+        destructive
+        onConfirm={handleRegenerateConfirmed}
+      />
+      <ConfirmDialog
+        open={confirming === "category"}
+        onOpenChange={(o) => !o && setConfirming(null)}
+        title={`Refresh ${formatCategory(category)} checklist?`}
+        description="Only this category's checklist items will be replaced. Other sections stay unchanged."
+        confirmLabel="Refresh category"
+        onConfirm={handlePartialRegenerateConfirmed}
+      />
     </div>
   );
 }

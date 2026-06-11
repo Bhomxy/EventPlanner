@@ -13,6 +13,7 @@ import {
 } from "@/lib/events/actions";
 import { CURRENCIES, formatMoney } from "@/lib/format";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -30,6 +31,7 @@ type BudgetTableProps = {
 };
 
 export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
+  const { toast } = useToast();
   const [, startTransition] = useTransition();
   const router = useRouter();
   const [showAdd, setShowAdd] = useState(false);
@@ -55,6 +57,7 @@ export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
       } else {
         await updateBudgetItem(id, { [field]: Number(value) || 0 });
       }
+      toast("Saved");
       router.refresh();
     });
   }
@@ -62,6 +65,7 @@ export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
   function updateCategory(id: string, category: BudgetCategory) {
     startTransition(async () => {
       await updateBudgetItem(id, { category });
+      toast("Category saved");
       router.refresh();
     });
   }
@@ -69,6 +73,7 @@ export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
   function handleDelete(id: string) {
     startTransition(async () => {
       await deleteBudgetItem(id);
+      toast("Line item deleted");
       router.refresh();
     });
   }
@@ -84,6 +89,7 @@ export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
       });
       setNewItem({ label: "", category: "venue", item_type: "expense", estimated: "" });
       setShowAdd(false);
+      toast("Line item added");
       router.refresh();
     });
   }
@@ -92,6 +98,7 @@ export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
     setActiveCurrency(next);
     startTransition(async () => {
       await updateEventCurrency(eventId, next);
+      toast(`Currency set to ${next}`);
       router.refresh();
     });
   }
@@ -202,7 +209,7 @@ export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
                   />
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-red-500" onClick={() => handleDelete(item.id)}>
+                  <Button type="button" variant="ghost" size="icon" title="Delete line item" className="h-8 w-8 text-red-500" onClick={() => handleDelete(item.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </td>

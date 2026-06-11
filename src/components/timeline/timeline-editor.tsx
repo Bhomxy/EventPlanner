@@ -14,6 +14,7 @@ import {
 } from "@/lib/events/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +33,7 @@ type TimelineEditorProps = {
 
 export function TimelineEditor({ eventId, items }: TimelineEditorProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [, startTransition] = useTransition();
   const [localItems, setLocalItems] = useState(items);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -63,6 +65,7 @@ export function TimelineEditor({ eventId, items }: TimelineEditorProps) {
     setLocalItems((current) => current.filter((i) => i.id !== id));
     startTransition(async () => {
       await deleteTimelineItem(id);
+      toast("Schedule item removed");
       router.refresh();
     });
   }
@@ -77,6 +80,7 @@ export function TimelineEditor({ eventId, items }: TimelineEditorProps) {
         end_time: new Date(form.end_time).toISOString(),
       });
       setEditingId(null);
+      toast("Saved");
       router.refresh();
     });
   }

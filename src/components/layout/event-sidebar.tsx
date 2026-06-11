@@ -14,10 +14,10 @@ import {
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "", label: "Checklists", icon: ListChecks },
-  { href: "/tasks", label: "Board", icon: CheckSquare },
+  { href: "", label: "Task list", icon: ListChecks },
+  { href: "/tasks", label: "Task board", icon: CheckSquare },
   { href: "/budget", label: "Budget", icon: DollarSign },
-  { href: "/timeline", label: "Run sheet", icon: Clock },
+  { href: "/timeline", label: "Schedule", icon: Clock },
   { href: "/team", label: "Team", icon: Users },
   { href: "/edit", label: "Settings", icon: Settings },
 ];
