@@ -16,12 +16,12 @@ export function EventStatusBar({ event, stats, eventId }: EventStatusBarProps) {
   const nextDeadline = stats.upcomingDeadlines[0];
 
   return (
-    <div className="surface-card rounded-2xl p-4 sm:p-5">
+    <div className="surface-card rounded-[var(--radius-xl)] p-4 sm:p-5">
       <div className="flex flex-wrap items-center gap-3">
         <CountdownBadge date={event.date} />
-        <span className="text-sm font-medium">{stats.progress}% complete</span>
+        <span className="tabular-nums text-sm font-semibold">{stats.progress}% complete</span>
         {stats.overdueTasks > 0 ? (
-          <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-950 dark:text-red-300">
+          <span className="tabular-nums rounded-[var(--radius-sm)] bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800 dark:bg-red-950/60 dark:text-red-300">
             {stats.overdueTasks} overdue
           </span>
         ) : null}
@@ -29,30 +29,39 @@ export function EventStatusBar({ event, stats, eventId }: EventStatusBarProps) {
       <Progress value={stats.progress} className="mt-3" />
       <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
         {nextDeadline ? (
-          <p className="text-zinc-600 dark:text-zinc-400">
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">Next deadline:</span>{" "}
-            {nextDeadline.title} ({nextDeadline.due_date})
+          <p className="text-stone-600 dark:text-stone-400">
+            <span className="font-semibold text-stone-900 dark:text-stone-100">Next deadline</span>{" "}
+            — {nextDeadline.title} ({nextDeadline.due_date})
           </p>
         ) : null}
         {topRisk ? (
-          <p className="flex items-start gap-1.5 text-amber-700 dark:text-amber-400">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <p className="flex items-start gap-1.5 text-amber-800 dark:text-amber-300/90">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2} />
             {topRisk.message}
           </p>
         ) : null}
       </div>
-      <div className="mt-3 flex flex-wrap gap-2 border-t border-zinc-100 pt-3 text-xs dark:border-zinc-800">
-        <span className="text-zinc-500">
+      <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 border-t border-[var(--border)] pt-3 text-xs">
+        <span className="tabular-nums text-stone-500">
           Budget remaining: {formatMoney(Math.round(stats.budgetRemaining), event.currency)}
         </span>
-        <span className="text-zinc-300">·</span>
-        <Link href={`/events/${eventId}/budget`} className="font-medium text-violet-700 hover:underline dark:text-violet-300">
+        <span className="hidden text-stone-300 sm:inline">·</span>
+        <Link
+          href={`/events/${eventId}/budget`}
+          className="interactive font-semibold text-[var(--brand)] hover:underline"
+        >
           Budget
         </Link>
-        <Link href={`/events/${eventId}/timeline`} className="font-medium text-violet-700 hover:underline dark:text-violet-300">
+        <Link
+          href={`/events/${eventId}/timeline`}
+          className="interactive font-semibold text-[var(--brand)] hover:underline"
+        >
           Schedule
         </Link>
-        <Link href={`/events/${eventId}/team`} className="font-medium text-violet-700 hover:underline dark:text-violet-300">
+        <Link
+          href={`/events/${eventId}/team`}
+          className="interactive font-semibold text-[var(--brand)] hover:underline"
+        >
           Team
         </Link>
       </div>

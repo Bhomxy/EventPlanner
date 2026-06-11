@@ -41,18 +41,20 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
           <Badge>{formatEventType(event.type)}</Badge>
           <CountdownBadge date={event.date} />
           {event.date ? (
-            <span className="text-xs text-zinc-500">{formatEventDate(event.date)}</span>
+            <span className="text-xs text-stone-500">{formatEventDate(event.date)}</span>
           ) : null}
         </div>
         <div className="flex items-start justify-between gap-2">
-          <h1 className="font-display text-2xl font-bold tracking-tight">{event.name}</h1>
+          <h1 className="font-display text-balance text-2xl font-semibold tracking-tight">
+            {event.name}
+          </h1>
           <div className="flex shrink-0 items-center gap-1.5">
             <ShareEventButton eventId={eventId} shareToken={event.share_token} />
             <EventCardMenu eventId={eventId} />
           </div>
         </div>
         {event.location ? (
-          <p className="mt-1 text-sm text-zinc-500">{event.location}</p>
+          <p className="mt-1 text-sm text-stone-500">{event.location}</p>
         ) : null}
       </div>
 
@@ -67,10 +69,8 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
 
       <PlanSummaryEditor eventId={eventId} initialSummary={event.plan_summary} />
 
-      <div className="flex flex-wrap gap-3 border-t border-zinc-100 pt-6 dark:border-zinc-800">
-        <p className="w-full text-xs font-medium uppercase tracking-wide text-zinc-400">
-          More tools
-        </p>
+      <div className="flex flex-wrap gap-3 border-t border-[var(--border)] pt-6">
+        <p className="w-full text-xs font-medium text-stone-500">More tools</p>
         <Button asChild variant="outline" size="sm">
           <Link href={`/events/${eventId}/budget`}>Budget</Link>
         </Button>

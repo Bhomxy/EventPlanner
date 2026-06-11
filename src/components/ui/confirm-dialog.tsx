@@ -29,7 +29,7 @@ export function ConfirmDialog({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-[2px]" />
         <Dialog.Content
-          className="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-stone-200 bg-white p-5 shadow-2xl outline-none dark:border-stone-700 dark:bg-stone-900"
+          className="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-2xl outline-none"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-start gap-3">
@@ -38,7 +38,7 @@ export function ConfirmDialog({
                 "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
                 destructive
                   ? "bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400"
-                  : "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+                  : "bg-[var(--brand-muted)] text-[var(--brand)]",
               )}
             >
               <AlertTriangle className="h-4.5 w-4.5" />

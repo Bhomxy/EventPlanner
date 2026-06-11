@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 
 export function AppHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-stone-200/80 bg-white/85 backdrop-blur-md dark:border-stone-800 dark:bg-stone-950/85">
+    <header className="glass-panel sticky top-0 z-40 border-x-0 border-t-0">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/dashboard">
+        <Link href="/dashboard" className="interactive rounded-[var(--radius-md)]">
           <AppLogo />
         </Link>
 
@@ -19,7 +19,7 @@ export function AppHeader() {
           <Button asChild variant="outline" size="sm">
             <Link href="/templates">Templates</Link>
           </Button>
-          <Button asChild size="sm" className="shadow-sm shadow-violet-600/15">
+          <Button asChild size="sm">
             <Link href="/events/new">
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">New event</span>

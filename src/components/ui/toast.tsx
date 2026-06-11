@@ -77,8 +77,8 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
   return (
     <div
       className={cn(
-        "pointer-events-auto flex items-center gap-2.5 rounded-xl border px-3.5 py-2.5 text-sm shadow-lg backdrop-blur",
-        "animate-fade-up border-stone-200 bg-white/95 text-stone-800 dark:border-stone-700 dark:bg-stone-900/95 dark:text-stone-100",
+        "pointer-events-auto flex items-center gap-2.5 rounded-[var(--radius-lg)] border px-3.5 py-2.5 text-sm shadow-lg backdrop-blur",
+        "animate-fade-up border-[var(--border)] bg-[var(--surface)]/95 text-stone-800 dark:text-stone-100",
         toast.variant === "error" &&
           "border-red-200 bg-red-50/95 text-red-800 dark:border-red-900 dark:bg-red-950/95 dark:text-red-200",
       )}
@@ -87,7 +87,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
         className={cn(
           "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
           toast.variant === "success" && "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-          toast.variant === "info" && "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+          toast.variant === "info" && "bg-[var(--brand-muted)] text-[var(--brand)]",
           toast.variant === "error" && "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300",
         )}
       >
@@ -101,7 +101,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
             toast.action!.onClick();
             onDismiss();
           }}
-          className="shrink-0 font-semibold text-violet-700 hover:underline dark:text-violet-300"
+          className="interactive shrink-0 font-semibold text-[var(--brand)] hover:underline"
         >
           {toast.action.label}
         </button>

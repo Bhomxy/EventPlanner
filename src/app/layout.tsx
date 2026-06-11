@@ -57,8 +57,11 @@ export default function RootLayout({
       >
         <body
           suppressHydrationWarning
-          className="min-h-full flex flex-col text-stone-900 dark:text-stone-50"
+          className="relative min-h-dvh flex flex-col text-stone-900 dark:text-stone-50"
         >
+          <a href="#main-content" className="skip-link">
+            Skip to content
+          </a>
           <ToastProvider>{children}</ToastProvider>
         </body>
       </html>

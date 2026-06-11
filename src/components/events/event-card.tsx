@@ -24,14 +24,14 @@ export function EventCard({ event }: EventCardProps) {
     <Link href={`/events/${event.id}`} className="group block h-full">
       <Card
         className={cn(
-          "h-full border-stone-200/80 transition-all duration-200 dark:border-stone-800",
-          "hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-600/5 dark:hover:border-violet-900",
-          event.attention_label && "border-l-4 border-l-orange-500 pl-0",
+          "interactive flex h-full flex-col border-[var(--border)]",
+          "hover:-translate-y-1 hover:border-[color-mix(in_oklab,var(--brand)_20%,var(--border))] hover:shadow-[0_8px_28px_-8px_rgb(var(--shadow-color)/0.12),0_0_0_1px_color-mix(in_oklab,var(--brand)_8%,transparent)]",
+          event.attention_label && "border-l-[3px] border-l-amber-600 pl-0 dark:border-l-amber-500",
         )}
       >
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="line-clamp-2 text-base transition-colors group-hover:text-violet-700 dark:group-hover:text-violet-300">
+            <CardTitle className="line-clamp-2 text-base font-semibold transition-colors group-hover:text-[var(--brand)]">
               {event.name}
             </CardTitle>
             <div className="flex shrink-0 items-center gap-1">
@@ -44,39 +44,43 @@ export function EventCard({ event }: EventCardProps) {
           {event.attention_label ? (
             <Badge
               variant="outline"
-              className="w-fit border-orange-300 text-[10px] text-orange-700 dark:border-orange-800 dark:text-orange-300"
+              className="w-fit border-amber-300/80 text-[10px] text-amber-800 dark:border-amber-800 dark:text-amber-300"
             >
               {event.attention_label}
             </Badge>
           ) : null}
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="flex flex-1 flex-col space-y-4">
           <div className="space-y-1 text-sm text-stone-500 dark:text-stone-400">
-            <p className="font-medium text-stone-700 dark:text-stone-300">
+            <p className="font-medium text-stone-800 dark:text-stone-200">
               {formatEventDate(event.date)}
             </p>
             <p>{getCountdownLabel(event.date)}</p>
             {event.location ? (
               <p className="flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5 shrink-0" />
+                <MapPin className="h-3.5 w-3.5 shrink-0 opacity-70" />
                 <span className="line-clamp-1">{event.location}</span>
               </p>
             ) : null}
           </div>
 
           {event.next_step ? (
-            <p className="rounded-lg bg-stone-50 px-3 py-2 text-sm text-stone-700 dark:bg-stone-900 dark:text-stone-300">
-              <span className="font-medium text-violet-700 dark:text-violet-300">Next:</span>{" "}
+            <p className="rounded-[var(--radius-md)] bg-[var(--surface-muted)] px-3 py-2.5 text-sm text-stone-700 dark:text-stone-300">
+              <span className="font-semibold text-[var(--brand)]">Next</span>{" "}
               {event.next_step}
             </p>
-          ) : null}
+          ) : (
+            <div className="flex-1" />
+          )}
 
-          <div className="space-y-2">
+          <div className="mt-auto space-y-2 pt-1">
             <div className="flex items-center justify-between text-xs text-stone-500">
               <span>
                 {event.completed_items} of {event.total_items} complete
               </span>
-              <span className="font-medium tabular-nums">{progress}%</span>
+              <span className="tabular-nums font-semibold text-stone-700 dark:text-stone-300">
+                {progress}%
+              </span>
             </div>
             <Progress value={progress} />
           </div>

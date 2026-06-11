@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen flex-col">
+    <main id="main-content" className="flex min-h-dvh flex-col">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center px-4 sm:px-6">
         <Link href="/">
           <AppLogo />
@@ -13,13 +13,11 @@ export default function NotFound() {
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center px-4 pb-24 text-center">
-        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-100 to-violet-200 text-violet-700 dark:from-violet-950 dark:to-violet-900 dark:text-violet-300">
-          <CalendarX2 className="h-8 w-8" />
+        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--brand-muted)] text-[var(--brand)]">
+          <CalendarX2 className="h-7 w-7" strokeWidth={1.75} />
         </div>
-        <p className="font-display text-sm font-semibold uppercase tracking-widest text-violet-700 dark:text-violet-300">
-          404
-        </p>
-        <h1 className="font-display mt-2 text-3xl font-bold tracking-tight">
+        <p className="tabular-nums text-sm font-semibold text-[var(--brand)]">404</p>
+        <h1 className="font-display text-balance mt-2 text-3xl font-semibold tracking-tight">
           This page isn&apos;t on the schedule
         </h1>
         <p className="mt-3 max-w-md text-sm leading-relaxed text-stone-500 dark:text-stone-400">

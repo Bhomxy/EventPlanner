@@ -458,25 +458,25 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
 
   return (
     <div className="space-y-8">
-      <div className="rounded-2xl border border-violet-200/80 bg-gradient-to-br from-violet-50 to-white p-5 shadow-sm shadow-violet-600/5 dark:border-violet-900 dark:from-violet-950/40 dark:to-stone-950">
+      <div className="surface-card rounded-[var(--radius-xl)] border-[color-mix(in_oklab,var(--brand)_18%,var(--border))] bg-[var(--brand-muted)]/30 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-sm font-medium text-violet-900 dark:text-violet-200">
-              {progress === 100 ? "You're ready!" : "Start here"}
+            <p className="text-sm font-semibold text-[var(--brand-foreground)] dark:text-[var(--brand)]">
+              {progress === 100 ? "You're ready" : "Start here"}
             </p>
-            <p className="mt-1 text-xs text-violet-700/80 dark:text-violet-300/80">
+            <p className="mt-1 text-xs text-stone-600 dark:text-stone-400">
               {completed} of {rootTasks.length} steps done · venue first, then work down
             </p>
           </div>
-          <span className="text-2xl font-bold text-violet-700 dark:text-violet-300">{progress}%</span>
+          <span className="tabular-nums text-2xl font-semibold text-[var(--brand)]">{progress}%</span>
         </div>
         <Progress value={progress} className="mt-3" />
         {nextUp.length ? (
           <ul className="mt-4 space-y-1">
             {nextUp.map((task) => (
-              <li key={task.id} className="text-sm text-zinc-700 dark:text-zinc-300">
+              <li key={task.id} className="text-sm text-stone-700 dark:text-stone-300">
                 → {task.title}
-                <span className="ml-2 text-xs text-zinc-500">({formatCategory(task.category)})</span>
+                <span className="ml-2 text-xs text-stone-500">({formatCategory(task.category)})</span>
               </li>
             ))}
           </ul>
@@ -485,7 +485,7 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
           <button
             type="button"
             onClick={() => setHideCompleted(!hideCompleted)}
-            className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-white px-3 py-1 text-xs font-medium text-violet-800 transition-colors hover:border-violet-300 dark:border-violet-800 dark:bg-violet-950/50 dark:text-violet-200"
+            className="interactive mt-4 inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs font-medium text-[var(--brand-foreground)] hover:border-[color-mix(in_oklab,var(--brand)_25%,var(--border))] dark:text-[var(--brand)]"
           >
             {hideCompleted ? "Show" : "Hide"} {completed} completed
           </button>
@@ -508,8 +508,8 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
             className={cn(
               "rounded-2xl border",
               isVenue
-                ? "border-violet-300 bg-white shadow-sm dark:border-violet-800 dark:bg-zinc-950"
-                : "border-zinc-200 dark:border-zinc-800",
+                ? "border-[color-mix(in_oklab,var(--brand)_22%,var(--border))] bg-[var(--surface)] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--brand)_8%,transparent)] dark:bg-[var(--surface)]"
+                : "border-[var(--border)] bg-[var(--surface-muted)]/30",
             )}
           >
             <button
@@ -533,7 +533,7 @@ export function ChecklistView({ eventId, tasks, members = [] }: ChecklistViewPro
                   <h3 className="font-semibold">
                     {formatCategory(category)}
                     {isVenue ? (
-                      <span className="ml-2 text-xs font-normal text-violet-600">Start here</span>
+                      <span className="ml-2 text-xs font-normal text-[var(--brand)]">Start here</span>
                     ) : null}
                   </h3>
                   <p className="text-xs text-zinc-500">{CATEGORY_HINTS[category]}</p>

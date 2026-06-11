@@ -27,9 +27,11 @@ export default async function EventLayout({ children, params }: EventLayoutProps
   return (
     <>
       <AppHeader />
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-7xl flex-col lg:flex-row">
+      <div className="mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-7xl flex-col lg:flex-row">
         <EventSidebar eventId={eventId} eventName={event.name} />
-        <div className="flex-1 px-4 py-6 sm:px-6 lg:py-8">{children}</div>
+        <div id="main-content" className="flex-1 px-4 py-6 sm:px-6 lg:py-8">
+          {children}
+        </div>
       </div>
     </>
   );
