@@ -30,6 +30,33 @@ export function getProgressPercent(completed: number, total: number) {
   return Math.round((completed / total) * 100);
 }
 
+export const CURRENCIES = [
+  { code: "USD", label: "US Dollar ($)" },
+  { code: "EUR", label: "Euro (€)" },
+  { code: "GBP", label: "British Pound (£)" },
+  { code: "NGN", label: "Nigerian Naira (₦)" },
+  { code: "GHS", label: "Ghanaian Cedi (₵)" },
+  { code: "KES", label: "Kenyan Shilling (KSh)" },
+  { code: "ZAR", label: "South African Rand (R)" },
+  { code: "INR", label: "Indian Rupee (₹)" },
+  { code: "CAD", label: "Canadian Dollar (CA$)" },
+  { code: "AUD", label: "Australian Dollar (A$)" },
+  { code: "JPY", label: "Japanese Yen (¥)" },
+  { code: "BRL", label: "Brazilian Real (R$)" },
+] as const;
+
+export function formatMoney(amount: number, currency?: string | null) {
+  try {
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: currency || "USD",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    return `${currency ?? "$"}${amount.toLocaleString()}`;
+  }
+}
+
 export const CATEGORY_ORDER: ChecklistCategory[] = [
   "venue",
   "volunteers",

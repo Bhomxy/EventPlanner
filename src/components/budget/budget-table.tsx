@@ -9,7 +9,9 @@ import {
   createBudgetItem,
   deleteBudgetItem,
   updateBudgetItem,
+  updateEventCurrency,
 } from "@/lib/events/actions";
+import { CURRENCIES, formatMoney } from "@/lib/format";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,12 +26,14 @@ import {
 type BudgetTableProps = {
   eventId: string;
   items: BudgetItem[];
+  currency?: string | null;
 };
 
-export function BudgetTable({ eventId, items }: BudgetTableProps) {
+export function BudgetTable({ eventId, items, currency }: BudgetTableProps) {
   const [, startTransition] = useTransition();
   const router = useRouter();
   const [showAdd, setShowAdd] = useState(false);
+  const [activeCurrency, setActiveCurrency] = useState(currency ?? "USD");
   const [newItem, setNewItem] = useState({
     label: "",
     category: "venue" as BudgetCategory,
@@ -77,15 +81,42 @@ export function BudgetTable({ eventId, items }: BudgetTableProps) {
     });
   }
 
+  function handleCurrencyChange(next: string) {
+    setActiveCurrency(next);
+    startTransition(async () => {
+      await updateEventCurrency(eventId, next);
+      router.refresh();
+    });
+  }
+
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-end gap-2">
+        <span className="text-sm text-zinc-500">Currency</span>
+        <Select value={activeCurrency} onValueChange={handleCurrencyChange}>
+          <SelectTrigger className="w-48">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {CURRENCIES.map((c) => (
+              <SelectItem key={c.code} value={c.code}>
+                {c.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-zinc-500">Estimated net</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold">
-            ${(income.reduce((s, i) => s + Number(i.estimated), 0) - totalEstExp).toLocaleString()}
+            {formatMoney(
+              income.reduce((s, i) => s + Number(i.estimated), 0) - totalEstExp,
+              activeCurrency,
+            )}
           </CardContent>
         </Card>
         <Card className={overspend ? "border-red-300 dark:border-red-900" : undefined}>
@@ -93,7 +124,7 @@ export function BudgetTable({ eventId, items }: BudgetTableProps) {
             <CardTitle className="text-sm text-zinc-500">Total spent</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold">
-            ${totalActExp.toLocaleString()}
+            {formatMoney(totalActExp, activeCurrency)}
             {overspend ? (
               <p className="mt-1 text-xs font-normal text-red-600">Over estimate</p>
             ) : null}
@@ -103,7 +134,9 @@ export function BudgetTable({ eventId, items }: BudgetTableProps) {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-zinc-500">Sponsor income</CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold">${totalIncome.toLocaleString()}</CardContent>
+          <CardContent className="text-2xl font-bold">
+            {formatMoney(totalIncome, activeCurrency)}
+          </CardContent>
         </Card>
       </div>
 

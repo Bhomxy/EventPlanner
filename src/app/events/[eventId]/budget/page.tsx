@@ -27,7 +27,7 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
           <p className="mt-1 text-sm">Target range: {event.budget_range}</p>
         ) : null}
       </div>
-      <BudgetTable eventId={eventId} items={items} />
+      <BudgetTable eventId={eventId} items={items} currency={event.currency} />
     </div>
   );
 }

@@ -204,6 +204,17 @@ export async function deleteEvent(eventId: string) {
   redirect("/dashboard");
 }
 
+export async function updateEventCurrency(eventId: string, currency: string) {
+  await ensureEditAccess(eventId);
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("events")
+    .update({ currency, updated_at: new Date().toISOString() })
+    .eq("id", eventId);
+  if (error) throw error;
+  revalidateEvent(eventId);
+}
+
 export async function archiveEvent(eventId: string) {
   await ensureEditAccess(eventId);
   const supabase = createAdminClient();
@@ -231,6 +242,7 @@ export async function duplicateEvent(eventId: string) {
       goal: event.goal,
       notes: event.notes,
       budget_range: event.budget_range,
+      currency: event.currency ?? "USD",
       plan_summary: event.plan_summary,
       status: "planning",
     })

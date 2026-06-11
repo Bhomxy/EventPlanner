@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getEventExportData } from "@/lib/events/actions";
-import { formatEventDate, formatEventType, formatCategory } from "@/lib/format";
+import { formatEventDate, formatEventType, formatCategory, formatMoney } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -47,8 +47,8 @@ export default async function ExportPage({ params }: ExportPageProps) {
           {event.location ? <p><strong>Location:</strong> {event.location}</p> : null}
           <p><strong>Completed tasks:</strong> {completedTasks.length}</p>
           <p><strong>Open tasks:</strong> {openTasks.length}</p>
-          <p><strong>Total spent:</strong> ${totalSpent.toLocaleString()}</p>
-          <p><strong>Sponsor income:</strong> ${totalIncome.toLocaleString()}</p>
+          <p><strong>Total spent:</strong> {formatMoney(totalSpent, event.currency)}</p>
+          <p><strong>Sponsor income:</strong> {formatMoney(totalIncome, event.currency)}</p>
         </CardContent>
       </Card>
 
@@ -78,7 +78,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
               .map((item) => (
                 <li key={item.id} className="flex justify-between text-zinc-600 dark:text-zinc-400">
                   <span>{item.label}</span>
-                  <span>${Number(item.actual).toLocaleString()}</span>
+                  <span>{formatMoney(Number(item.actual), event.currency)}</span>
                 </li>
               ))}
           </ul>

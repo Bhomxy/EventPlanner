@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { DashboardStats, Event } from "@/lib/types";
 import { CountdownBadge } from "@/components/layout/event-sidebar";
+import { formatMoney } from "@/lib/format";
 import { Progress } from "@/components/ui/progress";
 import { AlertTriangle } from "lucide-react";
 
@@ -42,7 +43,7 @@ export function EventStatusBar({ event, stats, eventId }: EventStatusBarProps) {
       </div>
       <div className="mt-3 flex flex-wrap gap-2 border-t border-zinc-100 pt-3 text-xs dark:border-zinc-800">
         <span className="text-zinc-500">
-          Budget remaining: ${Math.round(stats.budgetRemaining).toLocaleString()}
+          Budget remaining: {formatMoney(Math.round(stats.budgetRemaining), event.currency)}
         </span>
         <span className="text-zinc-300">·</span>
         <Link href={`/events/${eventId}/budget`} className="font-medium text-violet-700 hover:underline dark:text-violet-300">

@@ -76,6 +76,7 @@ export type Event = {
   goal: string | null;
   notes: string | null;
   budget_range: string | null;
+  currency: string | null;
   plan_summary: string | null;
   status: EventStatus;
   created_at: string;
