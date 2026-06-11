@@ -12,6 +12,7 @@ import {
   updateTaskStatus,
 } from "@/lib/events/actions";
 import { TaskComments } from "@/components/tasks/task-comments";
+import { TaskAiActions } from "@/components/ai/task-ai-actions";
 import { formatCategory } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -61,6 +62,9 @@ export function TaskDetailPanel({
   const [category, setCategory] = useState(task.category);
   const [status, setStatus] = useState(task.status);
   const [assigneeId, setAssigneeId] = useState(task.assignee_id ?? "none");
+  const [contactName, setContactName] = useState(task.contact_name ?? "");
+  const [contactEmail, setContactEmail] = useState(task.contact_email ?? "");
+  const [contactPhone, setContactPhone] = useState(task.contact_phone ?? "");
 
   function saveField(data: {
     title?: string;
@@ -68,6 +72,9 @@ export function TaskDetailPanel({
     category?: ChecklistCategory;
     due_date?: string | null;
     assignee_id?: string | null;
+    contact_name?: string | null;
+    contact_email?: string | null;
+    contact_phone?: string | null;
   }) {
     onUpdate({ ...task, ...data });
     startTransition(async () => {
@@ -214,10 +221,36 @@ export function TaskDetailPanel({
                   description: description.trim() || null,
                 })
               }
-              placeholder="Contact info, links, context…"
+              placeholder="Links, context, internal notes…"
               className="min-h-[100px]"
             />
           </div>
+
+          <div className="space-y-3">
+            <Label>Vendor / contact</Label>
+            <Input
+              value={contactName}
+              onChange={(e) => setContactName(e.target.value)}
+              onBlur={() => saveField({ contact_name: contactName.trim() || null })}
+              placeholder="Contact name"
+            />
+            <Input
+              type="email"
+              value={contactEmail}
+              onChange={(e) => setContactEmail(e.target.value)}
+              onBlur={() => saveField({ contact_email: contactEmail.trim() || null })}
+              placeholder="Email"
+            />
+            <Input
+              type="tel"
+              value={contactPhone}
+              onChange={(e) => setContactPhone(e.target.value)}
+              onBlur={() => saveField({ contact_phone: contactPhone.trim() || null })}
+              placeholder="Phone"
+            />
+          </div>
+
+          <TaskAiActions eventId={eventId} task={task} />
 
           <TaskComments taskId={task.id} />
         </div>

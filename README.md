@@ -27,9 +27,16 @@ supabase/migrations/001_initial_schema.sql
 supabase/migrations/002_prd_schema.sql
 supabase/migrations/003_event_currency.sql
 supabase/migrations/004_share_token.sql
+supabase/migrations/005_features.sql
 ```
 
-Migration 002 adds tasks, timeline, budget, team collaboration, activity logs, and templates. Migration 003 adds per-event budget currency. Migration 004 adds public share links.
+Migration 002 adds tasks, timeline, budget, team collaboration, activity logs, and templates. Migration 003 adds per-event budget currency. Migration 004 adds public share links. Migration 005 adds plan source tracking, task contacts, user templates, email reminders, and onboarding preferences.
+
+Optional environment variables:
+
+- `RESEND_API_KEY` + `RESEND_FROM_EMAIL` — deadline reminder emails (daily cron)
+- `CRON_SECRET` — secures `/api/cron/reminders` (set in Vercel Cron too)
+- `NEXT_PUBLIC_APP_URL` — link target in reminder emails
 
 ### 4. Clerk webhook (optional)
 

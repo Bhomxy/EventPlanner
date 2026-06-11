@@ -79,6 +79,7 @@ export type Event = {
   currency: string | null;
   share_token: string | null;
   plan_summary: string | null;
+  plan_source?: "ai" | "template" | null;
   status: EventStatus;
   created_at: string;
   updated_at: string;
@@ -95,6 +96,9 @@ export type Task = {
   priority: TaskPriority;
   due_date: string | null;
   assignee_id: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -161,7 +165,18 @@ export type Template = {
   event_type: EventType;
   description: string | null;
   payload: Record<string, unknown>;
+  user_id: string | null;
+  source_event_id: string | null;
   created_at: string;
+};
+
+export type UserPreferences = {
+  user_id: string;
+  email_reminders: boolean;
+  reminder_days: number;
+  onboarding_completed: boolean;
+  created_at: string;
+  updated_at: string;
 };
 
 export type EventWithProgress = Event & {

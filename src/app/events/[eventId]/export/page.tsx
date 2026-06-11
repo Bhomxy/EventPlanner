@@ -39,6 +39,14 @@ export default async function ExportPage({ params }: ExportPageProps) {
             </a>
           </Button>
           <Button asChild variant="outline" size="sm">
+            <a href={`/api/events/${eventId}/calendar`} download>
+              Export calendar (.ics)
+            </a>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/events/${eventId}/retrospective`}>Retrospective</Link>
+          </Button>
+          <Button asChild variant="outline" size="sm">
             <Link href={`/events/${eventId}`}>Back to task list</Link>
           </Button>
         </div>

@@ -10,6 +10,7 @@ import {
   ListChecks,
   Settings,
   Users,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ const links = [
   { href: "/budget", label: "Budget", icon: DollarSign },
   { href: "/timeline", label: "Schedule", icon: Clock },
   { href: "/team", label: "Team", icon: Users },
+  { href: "/retrospective", label: "Retrospective", icon: BarChart3 },
   { href: "/edit", label: "Settings", icon: Settings },
 ];
 

@@ -33,6 +33,7 @@ export async function persistGeneratedPlan(
     .from("events")
     .update({
       plan_summary: formatPlanSummary(plan),
+      plan_source: plan.source,
       updated_at: new Date().toISOString(),
     })
     .eq("id", eventId);

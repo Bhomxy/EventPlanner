@@ -4,9 +4,10 @@ import { Plus } from "lucide-react";
 import { AppHeader } from "@/components/layout/app-header";
 import { DeadlineAlerts } from "@/components/events/deadline-alerts";
 import { EmptyEventsState, EventCard } from "@/components/events/event-card";
+import { OnboardingTour } from "@/components/onboarding/onboarding-tour";
 import type { EventWithProgress } from "@/lib/types";
 import { getEventsForUser } from "@/lib/events/queries";
-import { syncPendingInvites } from "@/lib/events/actions";
+import { getUserPreferencesAction, syncPendingInvites } from "@/lib/events/actions";
 import { Button } from "@/components/ui/button";
 
 export default async function DashboardPage() {
@@ -21,6 +22,14 @@ export default async function DashboardPage() {
 
   let events: EventWithProgress[] = [];
   let error: string | null = null;
+  let onboardingCompleted = true;
+
+  try {
+    const prefs = await getUserPreferencesAction();
+    onboardingCompleted = prefs.onboarding_completed;
+  } catch {
+    // preferences table may not exist yet
+  }
 
   try {
     events = await getEventsForUser(userId);
@@ -49,6 +58,8 @@ export default async function DashboardPage() {
             </Link>
           </Button>
         </div>
+
+        <OnboardingTour completed={onboardingCompleted} />
 
         {error ? (
           <div className="rounded-[var(--radius-lg)] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200">

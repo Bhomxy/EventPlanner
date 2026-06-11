@@ -3,6 +3,10 @@ import { auth } from "@clerk/nextjs/server";
 import { ChecklistView } from "@/components/checklists/checklist-view";
 import { EventStatusBar } from "@/components/events/event-status-bar";
 import { PlanSummaryEditor } from "@/components/events/plan-summary-editor";
+import { PlanSourceBadge } from "@/components/events/plan-source-badge";
+import { SaveAsTemplateButton } from "@/components/events/save-as-template-button";
+import { CopyChecklistButton } from "@/components/events/copy-checklist-button";
+import { EventAiChat } from "@/components/ai/event-ai-chat";
 import { CountdownBadge } from "@/components/layout/event-sidebar";
 import {
   getDashboardStats,
@@ -39,6 +43,7 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
       <div>
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <Badge>{formatEventType(event.type)}</Badge>
+          <PlanSourceBadge event={event} />
           <CountdownBadge date={event.date} />
           {event.date ? (
             <span className="text-xs text-stone-500">{formatEventDate(event.date)}</span>
@@ -60,6 +65,8 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
 
       <EventStatusBar event={event} stats={stats} eventId={eventId} />
 
+      <EventAiChat eventId={eventId} />
+
       <ChecklistView
         key={tasks.map((t) => `${t.id}-${t.status}-${t.title}-${t.due_date}`).join(",")}
         eventId={eventId}
@@ -71,6 +78,13 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
 
       <div className="flex flex-wrap gap-3 border-t border-[var(--border)] pt-6">
         <p className="w-full text-xs font-medium text-stone-500">More tools</p>
+        <SaveAsTemplateButton eventId={eventId} eventName={event.name} />
+        <CopyChecklistButton eventId={eventId} />
+        <Button asChild variant="outline" size="sm">
+          <a href={`/api/events/${eventId}/calendar`} download>
+            Export calendar (.ics)
+          </a>
+        </Button>
         <Button asChild variant="outline" size="sm">
           <Link href={`/events/${eventId}/budget`}>Budget</Link>
         </Button>
@@ -82,6 +96,9 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
         </Button>
         <Button asChild variant="outline" size="sm">
           <Link href={`/events/${eventId}/tasks`}>Task board</Link>
+        </Button>
+        <Button asChild variant="outline" size="sm">
+          <Link href={`/events/${eventId}/retrospective`}>Retrospective</Link>
         </Button>
         <Button asChild variant="outline" size="sm">
           <Link href={`/events/${eventId}/export`}>Post-event export</Link>

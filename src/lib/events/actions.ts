@@ -392,6 +392,9 @@ export async function updateTaskDetails(
     assignee_id?: string | null;
     priority?: TaskPriority;
     status?: TaskStatus;
+    contact_name?: string | null;
+    contact_email?: string | null;
+    contact_phone?: string | null;
   },
 ) {
   const userId = await requireUserId();
@@ -416,6 +419,9 @@ export async function updateTaskDetails(
     assignee_id?: string | null;
     priority?: TaskPriority;
     status?: TaskStatus;
+    contact_name?: string | null;
+    contact_email?: string | null;
+    contact_phone?: string | null;
   } = {
     updated_at: new Date().toISOString(),
   };
@@ -426,6 +432,9 @@ export async function updateTaskDetails(
   if (data.assignee_id !== undefined) updates.assignee_id = data.assignee_id;
   if (data.priority !== undefined) updates.priority = data.priority;
   if (data.status !== undefined) updates.status = data.status;
+  if (data.contact_name !== undefined) updates.contact_name = data.contact_name?.trim() || null;
+  if (data.contact_email !== undefined) updates.contact_email = data.contact_email?.trim() || null;
+  if (data.contact_phone !== undefined) updates.contact_phone = data.contact_phone?.trim() || null;
 
   await supabase.from("tasks").update(updates).eq("id", taskId);
   revalidateEvent(task.event_id);
@@ -818,4 +827,166 @@ export async function updateEventStatus(eventId: string, status: EventStatus) {
     .update({ status, updated_at: new Date().toISOString() })
     .eq("id", eventId);
   revalidateEvent(eventId);
+}
+
+export async function saveEventAsTemplate(eventId: string, templateName: string) {
+  const userId = await requireUserId();
+  await ensureEditAccess(eventId);
+  const supabase = createAdminClient();
+
+  const { data: event } = await supabase.from("events").select("*").eq("id", eventId).single();
+  if (!event) throw new Error("Event not found");
+
+  const [tasks, timeline, budget] = await Promise.all([
+    supabase.from("tasks").select("*").eq("event_id", eventId),
+    supabase.from("timeline_items").select("*").eq("event_id", eventId),
+    supabase.from("budget_items").select("*").eq("event_id", eventId),
+  ]);
+
+  const { buildPlanPayloadFromEvent } = await import("@/lib/events/build-plan-payload");
+  const payload = buildPlanPayloadFromEvent(
+    (tasks.data ?? []) as import("@/lib/types").Task[],
+    (timeline.data ?? []) as import("@/lib/types").TimelineItem[],
+    (budget.data ?? []) as import("@/lib/types").BudgetItem[],
+    event.plan_summary,
+  );
+
+  const { data: template, error } = await supabase
+    .from("templates")
+    .insert({
+      name: templateName.trim(),
+      event_type: event.type,
+      description: `Saved from ${event.name}`,
+      payload,
+      user_id: userId,
+      source_event_id: eventId,
+    })
+    .select("id")
+    .single();
+
+  if (error) throw error;
+  revalidatePath("/templates");
+  return template.id as string;
+}
+
+export async function copyChecklistFromEvent(
+  targetEventId: string,
+  sourceEventId: string,
+  mode: "merge" | "replace" = "merge",
+) {
+  const userId = await requireUserId();
+  await ensureEditAccess(targetEventId);
+  if (!(await canAccessEvent(userId, sourceEventId))) {
+    throw new Error("Cannot access source event");
+  }
+
+  const supabase = createAdminClient();
+  const { data: sourceTasks } = await supabase
+    .from("tasks")
+    .select("*")
+    .eq("event_id", sourceEventId)
+    .is("parent_id", null)
+    .order("sort_order");
+
+  if (!sourceTasks?.length) throw new Error("Source event has no tasks");
+
+  if (mode === "replace") {
+    await supabase.from("tasks").delete().eq("event_id", targetEventId);
+  }
+
+  const { data: last } = await supabase
+    .from("tasks")
+    .select("sort_order")
+    .eq("event_id", targetEventId)
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  let sortOrder = (last?.sort_order ?? -1) + 1;
+  const rows = sourceTasks.map((t) => ({
+    event_id: targetEventId,
+    title: t.title,
+    description: t.description,
+    category: t.category,
+    status: "todo" as const,
+    priority: t.priority,
+    due_date: null,
+    sort_order: sortOrder++,
+  }));
+
+  await supabase.from("tasks").insert(rows);
+  revalidateEvent(targetEventId);
+}
+
+export async function getUserPreferencesAction() {
+  const userId = await requireUserId();
+  const supabase = createAdminClient();
+  const { data } = await supabase
+    .from("user_preferences")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (data) return data as import("@/lib/types").UserPreferences;
+
+  const { data: created } = await supabase
+    .from("user_preferences")
+    .insert({ user_id: userId })
+    .select("*")
+    .single();
+
+  return created as import("@/lib/types").UserPreferences;
+}
+
+export async function updateUserPreferences(data: {
+  email_reminders?: boolean;
+  reminder_days?: number;
+  onboarding_completed?: boolean;
+}) {
+  const userId = await requireUserId();
+  const supabase = createAdminClient();
+
+  await supabase.from("user_preferences").upsert(
+    {
+      user_id: userId,
+      ...data,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" },
+  );
+}
+
+export async function getEventsForCopyPicker(excludeEventId: string) {
+  const userId = await requireUserId();
+  const { getEventsForUser } = await import("@/lib/events/queries");
+  const events = await getEventsForUser(userId);
+  return events
+    .filter((e) => e.id !== excludeEventId)
+    .map((e) => ({ id: e.id, name: e.name, type: e.type }));
+}
+
+export async function getRetrospectiveData(eventId: string) {
+  const userId = await requireUserId();
+  const event = await getEventForUser(eventId, userId);
+  if (!event) throw new Error("Event not found");
+
+  const supabase = createAdminClient();
+  const [tasks, timeline, budget, stats] = await Promise.all([
+    supabase.from("tasks").select("*").eq("event_id", eventId),
+    supabase.from("timeline_items").select("*").eq("event_id", eventId),
+    supabase.from("budget_items").select("*").eq("event_id", eventId),
+    import("@/lib/events/queries").then((m) => m.getDashboardStats(eventId, event)),
+  ]);
+
+  const { buildRetrospective } = await import("@/lib/events/retrospective");
+  return {
+    event,
+    stats,
+    retrospective: buildRetrospective(
+      event,
+      (tasks.data ?? []) as import("@/lib/types").Task[],
+      (timeline.data ?? []) as import("@/lib/types").TimelineItem[],
+      (budget.data ?? []) as import("@/lib/types").BudgetItem[],
+    ),
+  };
 }
