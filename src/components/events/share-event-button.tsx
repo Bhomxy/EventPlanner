@@ -67,8 +67,8 @@ export function ShareEventButton({ eventId, shareToken }: ShareEventButtonProps)
               <div>
                 <p className="text-sm font-semibold">Share this plan</p>
                 <p className="mt-0.5 text-xs text-stone-500">
-                  Anyone with the link sees a read-only view of the checklist and run sheet. Budget
-                  stays private.
+                  Anyone with the link sees a read-only view of the full plan — checklist, run
+                  sheet, and budget.
                 </p>
               </div>
               <button

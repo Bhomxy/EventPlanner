@@ -3,13 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Check, MapPin, Users } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/server";
-import type { ChecklistCategory, Event, Task, TimelineItem } from "@/lib/types";
+import type { BudgetItem, ChecklistCategory, Event, Task, TimelineItem } from "@/lib/types";
 import {
   CATEGORY_ICONS,
   CATEGORY_ORDER,
   formatCategory,
   formatEventDate,
   formatEventType,
+  formatMoney,
   getProgressPercent,
 } from "@/lib/format";
 import { AppLogo } from "@/components/layout/app-logo";
@@ -32,7 +33,7 @@ async function getSharedEvent(token: string) {
     .maybeSingle();
   if (!event) return null;
 
-  const [{ data: tasks }, { data: timeline }] = await Promise.all([
+  const [{ data: tasks }, { data: timeline }, { data: budget }] = await Promise.all([
     supabase
       .from("tasks")
       .select("*")
@@ -44,12 +45,18 @@ async function getSharedEvent(token: string) {
       .select("*")
       .eq("event_id", event.id)
       .order("start_time"),
+    supabase
+      .from("budget_items")
+      .select("*")
+      .eq("event_id", event.id)
+      .order("created_at"),
   ]);
 
   return {
     event: event as Event,
     tasks: (tasks ?? []) as Task[],
     timeline: (timeline ?? []) as TimelineItem[],
+    budget: (budget ?? []) as BudgetItem[],
   };
 }
 
@@ -68,7 +75,12 @@ export default async function SharedEventPage({ params }: SharePageProps) {
   const data = await getSharedEvent(token);
   if (!data) notFound();
 
-  const { event, tasks, timeline } = data;
+  const { event, tasks, timeline, budget } = data;
+  const expenses = budget.filter((b) => b.item_type === "expense");
+  const income = budget.filter((b) => b.item_type === "income");
+  const totalEstimated = expenses.reduce((s, b) => s + Number(b.estimated), 0);
+  const totalSpent = expenses.reduce((s, b) => s + Number(b.actual), 0);
+  const totalIncome = income.reduce((s, b) => s + Number(b.actual), 0);
   const completed = tasks.filter((t) => t.status === "completed").length;
   const progress = getProgressPercent(completed, tasks.length);
 
@@ -143,6 +155,61 @@ export default async function SharedEventPage({ params }: SharePageProps) {
             {grouped.map(({ category, items }) => (
               <CategorySection key={category} category={category} items={items} />
             ))}
+          </div>
+        ) : null}
+
+        {budget.length ? (
+          <div className="space-y-4">
+            <h2 className="font-display text-lg font-semibold">Budget</h2>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="surface-card rounded-2xl p-4">
+                <p className="text-xs text-stone-500">Estimated expenses</p>
+                <p className="mt-1 text-xl font-bold">
+                  {formatMoney(totalEstimated, event.currency)}
+                </p>
+              </div>
+              <div className="surface-card rounded-2xl p-4">
+                <p className="text-xs text-stone-500">Spent so far</p>
+                <p className="mt-1 text-xl font-bold">{formatMoney(totalSpent, event.currency)}</p>
+              </div>
+              <div className="surface-card rounded-2xl p-4">
+                <p className="text-xs text-stone-500">Sponsor income</p>
+                <p className="mt-1 text-xl font-bold">{formatMoney(totalIncome, event.currency)}</p>
+              </div>
+            </div>
+            <div className="surface-card overflow-x-auto rounded-2xl">
+              <table className="w-full min-w-[480px] text-sm">
+                <thead className="border-b border-stone-100 text-left text-xs text-stone-500 dark:border-stone-800">
+                  <tr>
+                    <th className="px-5 py-3 font-medium">Item</th>
+                    <th className="px-5 py-3 font-medium">Category</th>
+                    <th className="px-5 py-3 text-right font-medium">Estimated</th>
+                    <th className="px-5 py-3 text-right font-medium">Actual</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-50 dark:divide-stone-900">
+                  {budget.map((item) => (
+                    <tr key={item.id}>
+                      <td className="px-5 py-2.5">
+                        {item.label}
+                        {item.item_type === "income" ? (
+                          <span className="ml-2 rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                            Income
+                          </span>
+                        ) : null}
+                      </td>
+                      <td className="px-5 py-2.5 capitalize text-stone-500">{item.category}</td>
+                      <td className="px-5 py-2.5 text-right tabular-nums">
+                        {formatMoney(Number(item.estimated), event.currency)}
+                      </td>
+                      <td className="px-5 py-2.5 text-right tabular-nums">
+                        {formatMoney(Number(item.actual), event.currency)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         ) : null}
 
