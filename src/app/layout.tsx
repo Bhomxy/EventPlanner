@@ -19,9 +19,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EventPlanner — AI event planning for tech communities",
+  metadataBase: new URL("https://eventplanner-black.vercel.app"),
+  title: {
+    default: "EventPlanner — AI event planning for tech communities",
+    template: "%s · EventPlanner",
+  },
   description:
     "Describe your event, get a tailored checklist, and work top-down from venue to launch day.",
+  openGraph: {
+    title: "EventPlanner — AI event planning for tech communities",
+    description:
+      "Describe your event, get a tailored checklist, and work top-down from venue to launch day.",
+    url: "/",
+    siteName: "EventPlanner",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "EventPlanner — AI event planning for tech communities",
+    description:
+      "Describe your event, get a tailored checklist, and work top-down from venue to launch day.",
+  },
 };
 
 export default function RootLayout({

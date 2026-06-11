@@ -99,6 +99,21 @@ export default async function HomePage() {
             <ChecklistPreview />
           </div>
         </section>
+
+        <footer className="flex flex-col items-center justify-between gap-3 border-t border-stone-200/80 py-8 text-xs text-stone-500 dark:border-stone-800 sm:flex-row">
+          <p>© {new Date().getFullYear()} EventPlanner. Built for community organizers.</p>
+          <nav className="flex items-center gap-5">
+            <Link href="/templates" className="transition-colors hover:text-stone-900 dark:hover:text-stone-200">
+              Templates
+            </Link>
+            <Link href="/sign-in" className="transition-colors hover:text-stone-900 dark:hover:text-stone-200">
+              Sign in
+            </Link>
+            <Link href="/sign-up" className="transition-colors hover:text-stone-900 dark:hover:text-stone-200">
+              Get started
+            </Link>
+          </nav>
+        </footer>
       </div>
     </main>
   );
