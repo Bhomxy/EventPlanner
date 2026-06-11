@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MapPin } from "lucide-react";
 import type { EventWithProgress } from "@/lib/types";
 import {
   formatEventDate,
@@ -6,6 +7,7 @@ import {
   getCountdownLabel,
   getProgressPercent,
 } from "@/lib/format";
+import { EventCardMenu } from "@/components/events/event-actions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -28,24 +30,25 @@ export function EventCard({ event }: EventCardProps) {
         )}
       >
         <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start justify-between gap-2">
             <CardTitle className="line-clamp-2 text-base transition-colors group-hover:text-violet-700 dark:group-hover:text-violet-300">
               {event.name}
             </CardTitle>
-            <div className="flex flex-col items-end gap-1">
+            <div className="flex shrink-0 items-center gap-1">
               <Badge variant="secondary" className="font-normal">
                 {formatEventType(event.type)}
               </Badge>
-              {event.attention_label ? (
-                <Badge
-                  variant="outline"
-                  className="border-orange-300 text-[10px] text-orange-700 dark:border-orange-800 dark:text-orange-300"
-                >
-                  {event.attention_label}
-                </Badge>
-              ) : null}
+              <EventCardMenu eventId={event.id} />
             </div>
           </div>
+          {event.attention_label ? (
+            <Badge
+              variant="outline"
+              className="w-fit border-orange-300 text-[10px] text-orange-700 dark:border-orange-800 dark:text-orange-300"
+            >
+              {event.attention_label}
+            </Badge>
+          ) : null}
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1 text-sm text-stone-500 dark:text-stone-400">
@@ -53,7 +56,12 @@ export function EventCard({ event }: EventCardProps) {
               {formatEventDate(event.date)}
             </p>
             <p>{getCountdownLabel(event.date)}</p>
-            {event.location ? <p className="line-clamp-1">{event.location}</p> : null}
+            {event.location ? (
+              <p className="flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 shrink-0" />
+                <span className="line-clamp-1">{event.location}</span>
+              </p>
+            ) : null}
           </div>
 
           {event.next_step ? (

@@ -11,6 +11,7 @@ import {
   getTasks,
 } from "@/lib/events/queries";
 import { formatEventDate, formatEventType } from "@/lib/format";
+import { EventCardMenu } from "@/components/events/event-actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -42,7 +43,10 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
             <span className="text-xs text-zinc-500">{formatEventDate(event.date)}</span>
           ) : null}
         </div>
-        <h1 className="font-display text-2xl font-bold tracking-tight">{event.name}</h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="font-display text-2xl font-bold tracking-tight">{event.name}</h1>
+          <EventCardMenu eventId={eventId} />
+        </div>
         {event.location ? (
           <p className="mt-1 text-sm text-zinc-500">{event.location}</p>
         ) : null}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,7 +30,6 @@ export function EventForm({ event, mode = "create", templateId }: EventFormProps
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [type, setType] = useState(event?.type ?? "meetup");
-  const [showDetails, setShowDetails] = useState(mode === "edit");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -107,42 +106,31 @@ export function EventForm({ event, mode = "create", templateId }: EventFormProps
         </div>
       </div>
 
-      <button
-        type="button"
-        disabled={isPending}
-        onClick={() => setShowDetails(!showDetails)}
-        className="flex items-center gap-2 text-sm text-stone-500 transition-colors hover:text-stone-800 dark:hover:text-stone-200"
-      >
-        <ChevronDown
-          className={cn("h-4 w-4 transition-transform", showDetails && "rotate-180")}
-        />
-        {showDetails ? "Hide" : "Add"} date, location & budget (optional)
-      </button>
-
-      {showDetails ? (
-        <div className="grid gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4 dark:border-stone-800 dark:bg-stone-900/30 sm:grid-cols-2">
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="name">Event name (optional)</Label>
-            <Input id="name" name="name" placeholder="Auto-generated from your description" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
-            <Input id="date" name="date" type="date" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
-            <Input id="location" name="location" placeholder="Lagos, Nigeria" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="audience_size">Expected audience</Label>
-            <Input id="audience_size" name="audience_size" type="number" min={1} placeholder="300" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="budget_range">Budget range</Label>
-            <Input id="budget_range" name="budget_range" placeholder="$2,000 - $5,000" />
-          </div>
+      <div className="grid gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4 dark:border-stone-800 dark:bg-stone-900/30 sm:grid-cols-2">
+        <p className="text-sm font-medium text-stone-600 dark:text-stone-300 sm:col-span-2">
+          Details <span className="font-normal text-stone-400">(all optional)</span>
+        </p>
+        <div className="space-y-2 sm:col-span-2">
+          <Label htmlFor="name">Event name</Label>
+          <Input id="name" name="name" placeholder="Auto-generated from your description" />
         </div>
-      ) : null}
+        <div className="space-y-2">
+          <Label htmlFor="date">Date</Label>
+          <Input id="date" name="date" type="date" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="location">Location</Label>
+          <Input id="location" name="location" placeholder="Lagos, Nigeria" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="audience_size">Expected audience</Label>
+          <Input id="audience_size" name="audience_size" type="number" min={1} placeholder="300" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="budget_range">Budget range</Label>
+          <Input id="budget_range" name="budget_range" placeholder="$2,000 - $5,000" />
+        </div>
+      </div>
 
       {isPending ? (
         <div className="rounded-xl border border-violet-200 bg-violet-50/80 p-4 dark:border-violet-900 dark:bg-violet-950/30">
@@ -229,6 +217,25 @@ function FormFields({
           <div className="space-y-2">
             <Label htmlFor="location">Location</Label>
             <Input id="location" name="location" defaultValue={event.location ?? undefined} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="audience_size">Expected audience</Label>
+            <Input
+              id="audience_size"
+              name="audience_size"
+              type="number"
+              min={1}
+              defaultValue={event.audience_size ?? undefined}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="budget_range">Budget range</Label>
+            <Input
+              id="budget_range"
+              name="budget_range"
+              placeholder="$2,000 - $5,000"
+              defaultValue={event.budget_range ?? undefined}
+            />
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="notes">Notes</Label>
